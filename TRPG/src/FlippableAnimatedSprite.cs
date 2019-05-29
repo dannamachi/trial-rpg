@@ -8,7 +8,7 @@ namespace TRPG.src
         Left,
         Right
     }
-    public class AnimatedSprite
+    public class FlippableAnimatedSprite
     {
         //fields
         private int currentFrame;
@@ -16,7 +16,7 @@ namespace TRPG.src
         private int frameTicks;
         private int frameDrawn;
         //constructors
-        public AnimatedSprite(Texture2D texture, int rows, int columns)
+        public FlippableAnimatedSprite(Texture2D texture, int rows, int columns)
         {
             Texture = texture;
             Rows = rows;

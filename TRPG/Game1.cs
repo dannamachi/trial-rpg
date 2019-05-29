@@ -12,24 +12,20 @@ namespace TRPG
     public class Game1 : Game
     {
         //fields
-        private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
+        private GraphicsDeviceManager _graphics;
+        private SpriteBatch _spriteBatch;
 
-        private AnimatedSprite walking;
-        private FacingWhichSide side;
+        private Player _player;
 
-        private TiledBackground background;
-
-        private Vector2 playerPos;
-        private float playerSpeed;
+        private TiledBackground _background;
 
         //properties
-        public int ScreenWidth { get => graphics.PreferredBackBufferWidth; set { graphics.PreferredBackBufferWidth = value; graphics.ApplyChanges(); } }
-        public int ScreenHeight { get => graphics.PreferredBackBufferHeight; set { graphics.PreferredBackBufferHeight = value; graphics.ApplyChanges(); } }
+        public int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
+        public int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
         //constructors
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
         //methods
@@ -42,9 +38,7 @@ namespace TRPG
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            playerPos = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-            playerSpeed = 100f;
-
+            _player = new Player();
             base.Initialize();
         }
 
@@ -55,16 +49,15 @@ namespace TRPG
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
 
             Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
-            walking = new AnimatedSprite(texture, 4, 9);
-            side = FacingWhichSide.Right;
+            _player.SetSprite(texture,4,9);
 
             Texture2D texture1 = Content.Load<Texture2D>("Background");
-            background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
+            _background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
         }
 
         /// <summary>
@@ -85,60 +78,68 @@ namespace TRPG
         {
             //getState
             var kstate = Keyboard.GetState();
-            float distance = playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float distance = _player.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (kstate.IsKeyDown(Keys.Up))
             {
-                if (background.Move(distance, Direction.South))
+                if (!_background.Move(distance, Direction.South))
                 {
-                    if (playerPos.Y - distance >= walking.Height) { playerPos.Y -= distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.North, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
+                        _player.Move(Direction.North, distance);
                 }
                 else
                 {
-                    if (playerPos.Y - distance >= 0) { playerPos.Y -= distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.North, new Rectangle(0, ScreenHeight / 3, ScreenWidth, ScreenHeight * 2 / 3)))
+                        _player.Move(Direction.North, distance);
                 }
-                walking.Update(side);
+                _player.UpdateAnimation();
             }
 
             else if (kstate.IsKeyDown(Keys.Down)) 
             {
-                if (background.Move(distance, Direction.North))
+                if (!_background.Move(distance, Direction.North))
                 {
-                    if (playerPos.Y + distance < ScreenHeight - 2 * walking.Height) { playerPos.Y += distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
+                        _player.Move(Direction.South, distance);
                 }
                 else
                 {
-                    if (playerPos.Y + distance < ScreenHeight - walking.Height) { playerPos.Y += distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight * 2 / 3)))
+                        _player.Move(Direction.South, distance);
                 }
-                walking.Update(side);
+                _player.UpdateAnimation();
             }
 
             if (kstate.IsKeyDown(Keys.Left))
             {
-                if (background.Move(distance, Direction.East))
+                _player.FaceTo(FacingWhichSide.Left);
+                if (!_background.Move(distance, Direction.East))
                 {
-                    if (playerPos.X - distance > walking.Width) { playerPos.X -= distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.West, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
+                        _player.Move(Direction.West, distance);
                 }
                 else
                 {
-                    if (playerPos.X - distance > 0) { playerPos.X -= distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.West, new Rectangle(ScreenWidth / 3, 0, ScreenWidth * 2 / 3, ScreenHeight / 3)))
+                        _player.Move(Direction.West, distance);
                 }
-                side = FacingWhichSide.Left;
-                walking.Update(side);
+                _player.UpdateAnimation();
             }
 
             else if (kstate.IsKeyDown(Keys.Right))
             {
-                if (background.Move(distance, Direction.West))
+                _player.FaceTo(FacingWhichSide.Right);
+                if (!_background.Move(distance, Direction.West))
                 {
-                    if (playerPos.X + distance < ScreenWidth - 2 * walking.Width) { playerPos.X += distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.East, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
+                        _player.Move(Direction.East, distance);
                 }
                 else
                 {
-                    if (playerPos.X + distance < ScreenWidth - walking.Width) { playerPos.X += distance; }
+                    if (_player.WillBeWithinRect(distance, Direction.East, new Rectangle(0, 0, ScreenWidth * 2 / 3, ScreenHeight)))
+                        _player.Move(Direction.East, distance);
                 }
-                side = FacingWhichSide.Right;
-                walking.Update(side);
+                _player.UpdateAnimation();
             }
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -158,8 +159,8 @@ namespace TRPG
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            background.Draw(spriteBatch);
-            walking.Draw(spriteBatch, playerPos);
+            _background.Draw(_spriteBatch);
+            _player.Draw(_spriteBatch);
 
             base.Draw(gameTime);
         }
