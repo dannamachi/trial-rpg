@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRPG", "TRPG\TRPG.csproj", "{8F798ECA-1264-49F8-A228-503B5DF82424}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F798ECA-1264-49F8-A228-503B5DF82424}.Debug|x86.ActiveCfg = Debug|x86
+		{8F798ECA-1264-49F8-A228-503B5DF82424}.Debug|x86.Build.0 = Debug|x86
+		{8F798ECA-1264-49F8-A228-503B5DF82424}.Release|x86.ActiveCfg = Release|x86
+		{8F798ECA-1264-49F8-A228-503B5DF82424}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8C25054F-5DD3-4073-B651-75EED210B9C9}
+	EndGlobalSection
+EndGlobal
