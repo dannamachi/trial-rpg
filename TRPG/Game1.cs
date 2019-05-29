@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using TRPG.src;
+
 namespace TRPG
 {
     /// <summary>
@@ -9,15 +11,28 @@ namespace TRPG
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        //fields
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
 
+        private AnimatedSprite walking;
+        private FacingWhichSide side;
+
+        private TiledBackground background;
+
+        private Vector2 playerPos;
+        private float playerSpeed;
+
+        //properties
+        public int ScreenWidth { get => graphics.PreferredBackBufferWidth; set { graphics.PreferredBackBufferWidth = value; graphics.ApplyChanges(); } }
+        public int ScreenHeight { get => graphics.PreferredBackBufferHeight; set { graphics.PreferredBackBufferHeight = value; graphics.ApplyChanges(); } }
+        //constructors
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-
+        //methods
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -27,6 +42,8 @@ namespace TRPG
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            playerPos = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
+            playerSpeed = 100f;
 
             base.Initialize();
         }
@@ -41,6 +58,13 @@ namespace TRPG
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+            Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
+            walking = new AnimatedSprite(texture, 4, 9);
+            side = FacingWhichSide.Right;
+
+            Texture2D texture1 = Content.Load<Texture2D>("Background");
+            background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
         }
 
         /// <summary>
@@ -59,8 +83,42 @@ namespace TRPG
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //getState
+            var kstate = Keyboard.GetState();
+            float distance = playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (kstate.IsKeyDown(Keys.Up))
+            {
+                if (playerPos.Y - distance >= 0) { playerPos.Y -= distance; }
+                background.Move(distance, Direction.South);
+                walking.Update(side);
+            }
+
+            else if (kstate.IsKeyDown(Keys.Down)) 
+            {
+                if (playerPos.Y + distance < ScreenHeight - walking.Height) { playerPos.Y += distance; }
+                background.Move(distance, Direction.North);
+                walking.Update(side);
+            }
+
+            if (kstate.IsKeyDown(Keys.Left))
+            {
+                if (playerPos.X - distance > 0) { playerPos.X -= distance; }
+                background.Move(distance, Direction.East);
+                side = FacingWhichSide.Left;
+                walking.Update(side);
+            }
+
+            else if (kstate.IsKeyDown(Keys.Right))
+            {
+                if (playerPos.X + distance < ScreenWidth - walking.Width) { playerPos.X += distance; }
+                background.Move(distance, Direction.West);
+                side = FacingWhichSide.Right;
+                walking.Update(side);
+            }
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            Exit();
 
             // TODO: Add your update logic here
 
@@ -76,6 +134,8 @@ namespace TRPG
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            background.Draw(spriteBatch);
+            walking.Draw(spriteBatch, playerPos);
 
             base.Draw(gameTime);
         }
