@@ -89,30 +89,54 @@ namespace TRPG
 
             if (kstate.IsKeyDown(Keys.Up))
             {
-                if (playerPos.Y - distance >= 0) { playerPos.Y -= distance; }
-                background.Move(distance, Direction.South);
+                if (background.Move(distance, Direction.South))
+                {
+                    if (playerPos.Y - distance >= walking.Height) { playerPos.Y -= distance; }
+                }
+                else
+                {
+                    if (playerPos.Y - distance >= 0) { playerPos.Y -= distance; }
+                }
                 walking.Update(side);
             }
 
             else if (kstate.IsKeyDown(Keys.Down)) 
             {
-                if (playerPos.Y + distance < ScreenHeight - walking.Height) { playerPos.Y += distance; }
-                background.Move(distance, Direction.North);
+                if (background.Move(distance, Direction.North))
+                {
+                    if (playerPos.Y + distance < ScreenHeight - 2 * walking.Height) { playerPos.Y += distance; }
+                }
+                else
+                {
+                    if (playerPos.Y + distance < ScreenHeight - walking.Height) { playerPos.Y += distance; }
+                }
                 walking.Update(side);
             }
 
             if (kstate.IsKeyDown(Keys.Left))
             {
-                if (playerPos.X - distance > 0) { playerPos.X -= distance; }
-                background.Move(distance, Direction.East);
+                if (background.Move(distance, Direction.East))
+                {
+                    if (playerPos.X - distance > walking.Width) { playerPos.X -= distance; }
+                }
+                else
+                {
+                    if (playerPos.X - distance > 0) { playerPos.X -= distance; }
+                }
                 side = FacingWhichSide.Left;
                 walking.Update(side);
             }
 
             else if (kstate.IsKeyDown(Keys.Right))
             {
-                if (playerPos.X + distance < ScreenWidth - walking.Width) { playerPos.X += distance; }
-                background.Move(distance, Direction.West);
+                if (background.Move(distance, Direction.West))
+                {
+                    if (playerPos.X + distance < ScreenWidth - 2 * walking.Width) { playerPos.X += distance; }
+                }
+                else
+                {
+                    if (playerPos.X + distance < ScreenWidth - walking.Width) { playerPos.X += distance; }
+                }
                 side = FacingWhichSide.Right;
                 walking.Update(side);
             }
