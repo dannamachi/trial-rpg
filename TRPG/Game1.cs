@@ -18,6 +18,8 @@ namespace TRPG
         private AnimatedSprite walking;
         private FacingWhichSide side;
 
+        private TiledBackground background;
+
         private Vector2 playerPos;
         private float playerSpeed;
 
@@ -60,6 +62,9 @@ namespace TRPG
             Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
             walking = new AnimatedSprite(texture, 4, 9);
             side = FacingWhichSide.Right;
+
+            Texture2D texture1 = Content.Load<Texture2D>("Background");
+            background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
         }
 
         /// <summary>
@@ -80,35 +85,40 @@ namespace TRPG
         {
             //getState
             var kstate = Keyboard.GetState();
+            float distance = playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (kstate.IsKeyDown(Keys.Up))
             {
-                if (playerPos.Y - playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds >= 0) { playerPos.Y -= playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds; }
+                if (playerPos.Y - distance >= 0) { playerPos.Y -= distance; }
+                background.Move(distance, Direction.South);
                 walking.Update(side);
             }
 
-            else if (kstate.IsKeyDown(Keys.Down))
+            else if (kstate.IsKeyDown(Keys.Down)) 
             {
-                if (playerPos.Y + playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds < ScreenHeight - walking.Height) { playerPos.Y += playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds; }
+                if (playerPos.Y + distance < ScreenHeight - walking.Height) { playerPos.Y += distance; }
+                background.Move(distance, Direction.North);
                 walking.Update(side);
             }
 
             if (kstate.IsKeyDown(Keys.Left))
             {
-                if (playerPos.X - playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds > 0) { playerPos.X -= playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds; }
+                if (playerPos.X - distance > 0) { playerPos.X -= distance; }
+                background.Move(distance, Direction.East);
                 side = FacingWhichSide.Left;
                 walking.Update(side);
             }
 
             else if (kstate.IsKeyDown(Keys.Right))
             {
-                if (playerPos.X + playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds < ScreenWidth - walking.Width) { playerPos.X += playerSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds; }
+                if (playerPos.X + distance < ScreenWidth - walking.Width) { playerPos.X += distance; }
+                background.Move(distance, Direction.West);
                 side = FacingWhichSide.Right;
                 walking.Update(side);
             }
 
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Exit();
 
             // TODO: Add your update logic here
 
@@ -124,12 +134,7 @@ namespace TRPG
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            //spriteBatch.Begin();
-            //spriteBatch.Draw(playerSprite, playerPos, null,Color.White,0f,
-            //                new Vector2(playerSprite.Width / 2, playerSprite.Height / 2),
-            //                Vector2.One,SpriteEffects.None,0f);
-            //spriteBatch.End();
-
+            background.Draw(spriteBatch);
             walking.Draw(spriteBatch, playerPos);
 
             base.Draw(gameTime);
