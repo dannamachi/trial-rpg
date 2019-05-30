@@ -80,6 +80,9 @@ namespace TRPG
             var kstate = Keyboard.GetState();
             float distance = _player.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            if (kstate.IsKeyDown(Keys.X)) { _player.Resize(215, 165); }
+            if (kstate.IsKeyDown(Keys.Z)) { _player.Resize(107, 83); }
+
             if (kstate.IsKeyDown(Keys.Up))
             {
                 if (!_background.Move(distance, Direction.South))
@@ -100,7 +103,7 @@ namespace TRPG
                 if (!_background.Move(distance, Direction.North))
                 {
                     if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.South, distance);
+                        _player.Move(Direction.South, distance); 
                 }
                 else
                 {
