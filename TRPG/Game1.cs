@@ -40,7 +40,7 @@ namespace TRPG
         {
             // TODO: Add your initialization logic here
             _player = new Player();
-            _foodChicken = new Item("Food - Chicken");
+            _foodChicken = new Item("Chicken");
             base.Initialize();
         }
 
@@ -87,6 +87,8 @@ namespace TRPG
 
             if (kstate.IsKeyDown(Keys.X)) { _player.Resize(215, 165); }
             if (kstate.IsKeyDown(Keys.Z)) { _player.Resize(107, 83); }
+
+            if (kstate.IsKeyDown(Keys.Space)) { _player.Take(_foodChicken); }
 
             if (kstate.IsKeyDown(Keys.Up))
             {
@@ -168,7 +170,8 @@ namespace TRPG
 
             // TODO: Add your drawing code here
             _background.Draw(_spriteBatch);
-            _foodChicken.Draw(_spriteBatch);
+            if (!_player.Have("Chicken"))
+                _foodChicken.Draw(_spriteBatch);
             _player.Draw(_spriteBatch);
 
             base.Draw(gameTime);
