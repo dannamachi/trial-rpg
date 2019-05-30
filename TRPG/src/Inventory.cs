@@ -20,6 +20,7 @@ namespace TRPG.src
         {
             SlotX = 38;
             SlotY = 110;
+            Capacity = 100;
         }
         //methods
         public void ResetScroll()

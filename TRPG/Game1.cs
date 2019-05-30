@@ -71,15 +71,15 @@ namespace TRPG
 
             // TODO: use this.Content to load your game content here
 
-            Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
+            Texture2D texture = Content.Load<Texture2D>("sprites/WalkingWithFlip");
             _player.SetSprite(texture,4,9);
 
-            Texture2D food6 = Content.Load<Texture2D>("25");
-            Texture2D food1 = Content.Load<Texture2D>("6");
-            Texture2D food2 = Content.Load<Texture2D>("28");
-            Texture2D food3 = Content.Load<Texture2D>("31");
-            Texture2D food4 = Content.Load<Texture2D>("32");
-            Texture2D food5 = Content.Load<Texture2D>("14");
+            Texture2D food6 = Content.Load<Texture2D>("sprites/25");
+            Texture2D food1 = Content.Load<Texture2D>("sprites/6");
+            Texture2D food2 = Content.Load<Texture2D>("sprites/28");
+            Texture2D food3 = Content.Load<Texture2D>("sprites/31");
+            Texture2D food4 = Content.Load<Texture2D>("sprites/32");
+            Texture2D food5 = Content.Load<Texture2D>("sprites/14");
             _food1.Sprite = new StaticSprite(food1);
             _food2.Sprite = new StaticSprite(food2);
             _food3.Sprite = new StaticSprite(food3);
@@ -93,18 +93,18 @@ namespace TRPG
             _player.Take(_food5);
             _player.Take(_food6);
 
-            Texture2D button = Content.Load<Texture2D>("ButtonInventory");
+            Texture2D button = Content.Load<Texture2D>("sprites/ButtonInventory");
             _button.SetSprite(button, 0, 0, button.Width, button.Height);
             _button.Resize(100, 100);
             _button.Location = new Vector2(ScreenWidth - _button.WidthDrawn, 0);
 
-            Texture2D inventoryWin = Content.Load<Texture2D>("InventoryWindow");
-            Texture2D inventorySlot = Content.Load<Texture2D>("InventorySlots");
+            Texture2D inventoryWin = Content.Load<Texture2D>("sprites/InventoryWindow");
+            Texture2D inventorySlot = Content.Load<Texture2D>("sprites/InventorySlots");
             _player.Inventory.SetSprite(inventoryWin, inventorySlot);
 
-            Texture2D texture1 = Content.Load<Texture2D>("Background");
+            Texture2D texture1 = Content.Load<Texture2D>("sprites/Background");
             _background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
-            Texture2D guibg = Content.Load<Texture2D>("gui_background");
+            Texture2D guibg = Content.Load<Texture2D>("sprites/gui_background");
             _guibackground = new StaticSprite(guibg);
             _guibackground.WidthDrawn = ScreenWidth;
             _guibackground.HeightDrawn = ScreenHeight;
