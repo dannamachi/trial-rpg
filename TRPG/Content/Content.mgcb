@@ -109,6 +109,30 @@
 /processorParam:TextureFormat=Color
 /build:sprites/ButtonInventory.png
 
+#begin sprites/Buttons_Button Normal - Down Arrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/Buttons_Button Normal - Down Arrow.png;sprites/ButtonTake.png
+
+#begin sprites/Buttons_Button Normal - Right Arrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/Buttons_Button Normal - Right Arrow.png;sprites/ButtonUse.png
+
 #begin sprites/Buttons_Button Normal - Sound.png
 /importer:TextureImporter
 /processor:TextureProcessor

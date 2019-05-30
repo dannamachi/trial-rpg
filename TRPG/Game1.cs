@@ -21,6 +21,8 @@ namespace TRPG
 
         private Button _button;
         private Button _button1;
+        private Button _button2;
+        private Button _button3;
 
         private StaticSprite _guibackground;
         private TiledBackground _background;
@@ -55,6 +57,8 @@ namespace TRPG
             _player = new Player();
             _button = new Button();
             _button1 = new Button();
+            _button2 = new Button();
+            _button3 = new Button();
 
             _food1 = new Item("Food 1");
             _food2 = new Item("Food 2");
@@ -99,7 +103,6 @@ namespace TRPG
             _player.Take(_food3);
             _player.Take(_food4);
             _player.Take(_food5);
-            _player.Take(_food6);
 
             Texture2D button = Content.Load<Texture2D>("sprites/ButtonInventory");
             _button.SetSprite(button, 0, 0, button.Width, button.Height);
@@ -110,6 +113,16 @@ namespace TRPG
             _button1.SetSprite(button1, 0, 0, button1.Width, button1.Height);
             _button1.Resize(100, 100);
             _button1.Location = new Vector2(ScreenWidth - _button1.WidthDrawn, 100);
+
+            Texture2D button2 = Content.Load<Texture2D>("sprites/ButtonTake");
+            _button2.SetSprite(button2, 0, 0, button2.Width, button2.Height);
+            _button2.Resize(100, 100);
+            _button2.Location = new Vector2(ScreenWidth - _button2.WidthDrawn, 200);
+
+            Texture2D button3 = Content.Load<Texture2D>("sprites/ButtonUse");
+            _button3.SetSprite(button3, 0, 0, button3.Width, button3.Height);
+            _button3.Resize(100, 100);
+            _button3.Location = new Vector2(ScreenWidth - _button3.WidthDrawn, 200);
 
             Texture2D inventoryWin = Content.Load<Texture2D>("sprites/InventoryWindow");
             Texture2D inventorySlot = Content.Load<Texture2D>("sprites/InventorySlots");
@@ -151,6 +164,15 @@ namespace TRPG
             {
                 if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
                 if (_button1.IsPressed(_lastMS.Position)) { _playingMusic = !_playingMusic; if (_playingMusic) { MediaPlayer.Play(_bgm); } else { MediaPlayer.Stop(); } }
+
+                if (!_showingInventory)
+                {
+                    if (_button2.IsPressed(_lastMS.Position)) { _player.Take(_food6); }
+                }
+                else
+                {
+                    if (_button3.IsPressed(_lastMS.Position)) { _player.Inventory.Remove("Food 6"); }
+                }
             }
 
             if (_showingInventory)
@@ -245,11 +267,14 @@ namespace TRPG
                 _background.Draw(_spriteBatch);
                 _button.Draw(_spriteBatch);
                 _player.Draw(_spriteBatch);
+                _button2.Draw(_spriteBatch);
+                if (!_player.Have("Food 6")) { _food6.Draw(_spriteBatch); }
             }
             else
             {
                 _guibackground.Draw(_spriteBatch, new Vector2(0,0));
                 _player.Inventory.Draw(_spriteBatch, new Rectangle(0, 0, ScreenWidth - _button.WidthDrawn, ScreenHeight));
+                _button3.Draw(_spriteBatch);
             }
             _button.Draw(_spriteBatch);
             _button1.Draw(_spriteBatch);
