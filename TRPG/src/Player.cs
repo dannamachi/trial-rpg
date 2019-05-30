@@ -10,9 +10,10 @@ namespace TRPG.src
         private float _posX;
         private float _posY;
         private float _speed;
-        private Container _inventory;
+        private Inventory _inventory;
         private FlippableAnimatedSprite _sprite;
         //properties
+        public Inventory Inventory { get => _inventory; }
         public float Y { get => _posY; }
         public float X { get => _posX; }
         public int Width { get => _sprite.WidthDrawn; }
@@ -24,7 +25,7 @@ namespace TRPG.src
             _posX = 0;
             _posY = 0;
             _speed = 100;
-            _inventory = new Container();
+            _inventory = new Inventory();
         }
         //methods
         public bool Have(string name)

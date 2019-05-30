@@ -5,7 +5,7 @@ namespace TRPG.src
     public class Container
     {
         //fields
-        private List<Item> _items;
+        protected List<Item> _items;
         //properties
         public int Count { get => _items.Count; }
         public int Capacity { get; set; }
@@ -17,6 +17,19 @@ namespace TRPG.src
             Capacity = 10;
         }
         //methods
+        public Item Remove(string name)
+        {
+            Item item = null;
+            if (Have(name))
+            {
+                foreach (Item itm in _items)
+                {
+                    if (itm.Name == name) { item = itm; break; }
+                }
+                _items.Remove(item);
+            }
+            return item;
+        }
         public bool Have(string name)
         {
             foreach (Item itm in _items)
