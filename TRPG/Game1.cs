@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 using TRPG.src;
 
@@ -19,12 +20,16 @@ namespace TRPG
         private Item _food1, _food2, _food3, _food4, _food5, _food6;
 
         private Button _button;
+        private Button _button1;
 
         private StaticSprite _guibackground;
         private TiledBackground _background;
 
         private bool _showingInventory;
+        private bool _playingMusic;
         private MouseState _currentMS, _lastMS;
+
+        private Song _bgm;
         //properties
         public int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
         public int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
@@ -34,6 +39,8 @@ namespace TRPG
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             _showingInventory = false;
+            _playingMusic = false;
+            MediaPlayer.IsRepeating = true;
         }
         //methods
         /// <summary>
@@ -47,6 +54,7 @@ namespace TRPG
             // TODO: Add your initialization logic here
             _player = new Player();
             _button = new Button();
+            _button1 = new Button();
 
             _food1 = new Item("Food 1");
             _food2 = new Item("Food 2");
@@ -71,15 +79,15 @@ namespace TRPG
 
             // TODO: use this.Content to load your game content here
 
-            Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
+            Texture2D texture = Content.Load<Texture2D>("sprites/WalkingWithFlip");
             _player.SetSprite(texture,4,9);
 
-            Texture2D food6 = Content.Load<Texture2D>("25");
-            Texture2D food1 = Content.Load<Texture2D>("6");
-            Texture2D food2 = Content.Load<Texture2D>("28");
-            Texture2D food3 = Content.Load<Texture2D>("31");
-            Texture2D food4 = Content.Load<Texture2D>("32");
-            Texture2D food5 = Content.Load<Texture2D>("14");
+            Texture2D food6 = Content.Load<Texture2D>("sprites/25");
+            Texture2D food1 = Content.Load<Texture2D>("sprites/6");
+            Texture2D food2 = Content.Load<Texture2D>("sprites/28");
+            Texture2D food3 = Content.Load<Texture2D>("sprites/31");
+            Texture2D food4 = Content.Load<Texture2D>("sprites/32");
+            Texture2D food5 = Content.Load<Texture2D>("sprites/14");
             _food1.Sprite = new StaticSprite(food1);
             _food2.Sprite = new StaticSprite(food2);
             _food3.Sprite = new StaticSprite(food3);
@@ -93,21 +101,28 @@ namespace TRPG
             _player.Take(_food5);
             _player.Take(_food6);
 
-            Texture2D button = Content.Load<Texture2D>("ButtonInventory");
+            Texture2D button = Content.Load<Texture2D>("sprites/ButtonInventory");
             _button.SetSprite(button, 0, 0, button.Width, button.Height);
             _button.Resize(100, 100);
             _button.Location = new Vector2(ScreenWidth - _button.WidthDrawn, 0);
 
-            Texture2D inventoryWin = Content.Load<Texture2D>("InventoryWindow");
-            Texture2D inventorySlot = Content.Load<Texture2D>("InventorySlots");
+            Texture2D button1 = Content.Load<Texture2D>("sprites/ButtonMusic");
+            _button1.SetSprite(button1, 0, 0, button1.Width, button1.Height);
+            _button1.Resize(100, 100);
+            _button1.Location = new Vector2(ScreenWidth - _button1.WidthDrawn, 100);
+
+            Texture2D inventoryWin = Content.Load<Texture2D>("sprites/InventoryWindow");
+            Texture2D inventorySlot = Content.Load<Texture2D>("sprites/InventorySlots");
             _player.Inventory.SetSprite(inventoryWin, inventorySlot);
 
-            Texture2D texture1 = Content.Load<Texture2D>("Background");
+            Texture2D texture1 = Content.Load<Texture2D>("sprites/Background");
             _background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
-            Texture2D guibg = Content.Load<Texture2D>("gui_background");
+            Texture2D guibg = Content.Load<Texture2D>("sprites/gui_background");
             _guibackground = new StaticSprite(guibg);
             _guibackground.WidthDrawn = ScreenWidth;
             _guibackground.HeightDrawn = ScreenHeight;
+
+            _bgm = Content.Load<Song>("tracks/BGM");
         }
 
         /// <summary>
@@ -135,6 +150,7 @@ namespace TRPG
             if (_currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed)
             {
                 if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
+                if (_button1.IsPressed(_lastMS.Position)) { _playingMusic = !_playingMusic; if (_playingMusic) { MediaPlayer.Play(_bgm); } else { MediaPlayer.Stop(); } }
             }
 
             if (_showingInventory)
@@ -233,10 +249,10 @@ namespace TRPG
             else
             {
                 _guibackground.Draw(_spriteBatch, new Vector2(0,0));
-                _button.Draw(_spriteBatch);
                 _player.Inventory.Draw(_spriteBatch, new Rectangle(0, 0, ScreenWidth - _button.WidthDrawn, ScreenHeight));
             }
-
+            _button.Draw(_spriteBatch);
+            _button1.Draw(_spriteBatch);
             base.Draw(gameTime);
         }
     }
