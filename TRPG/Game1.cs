@@ -16,6 +16,7 @@ namespace TRPG
         private SpriteBatch _spriteBatch;
 
         private Player _player;
+        private Item _foodChicken;
 
         private TiledBackground _background;
 
@@ -39,6 +40,7 @@ namespace TRPG
         {
             // TODO: Add your initialization logic here
             _player = new Player();
+            _foodChicken = new Item("Food - Chicken");
             base.Initialize();
         }
 
@@ -55,6 +57,9 @@ namespace TRPG
 
             Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
             _player.SetSprite(texture,4,9);
+            Texture2D texture2 = Content.Load<Texture2D>("FoodChicken");
+            _foodChicken.Sprite = new StaticSprite(texture2, 0, 0, 100, 100);
+            _foodChicken.Location = new Vector2(100, 100);
 
             Texture2D texture1 = Content.Load<Texture2D>("Background");
             _background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
@@ -163,6 +168,7 @@ namespace TRPG
 
             // TODO: Add your drawing code here
             _background.Draw(_spriteBatch);
+            _foodChicken.Draw(_spriteBatch);
             _player.Draw(_spriteBatch);
 
             base.Draw(gameTime);

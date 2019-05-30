@@ -11,9 +11,8 @@ namespace TRPG.src
         public Sprite Sprite { get; set; }
         public string Name { get; set; }
         //constructors
-        public Item(string name, Sprite sprite)
+        public Item(string name)
         {
-            Sprite = sprite;
             Name = name;
             Location = new Vector2(0, 0);
         }
@@ -22,7 +21,6 @@ namespace TRPG.src
         {
             Sprite.WidthDrawn = width;
             Sprite.HeightDrawn = height;
-
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {

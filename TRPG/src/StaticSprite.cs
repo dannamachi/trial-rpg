@@ -12,6 +12,8 @@ namespace TRPG.src
         public StaticSprite(Texture2D texture, int horiDist, int vertDist, int width, int height) : base (texture)
         {
             SpriteRect = new Rectangle(horiDist, vertDist, width, height);
+            WidthDrawn = width;
+            HeightDrawn = height;
         }
         //methods
         public override void Draw(SpriteBatch spriteBatch, Vector2 location)
