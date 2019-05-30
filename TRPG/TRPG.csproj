@@ -45,6 +45,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\AnimatedSprite.cs" />
+    <Compile Include="src\Button.cs" />
     <Compile Include="src\Container.cs" />
     <Compile Include="src\FlippableAnimatedSprite.cs" />
     <Compile Include="src\Item.cs" />
