@@ -26,5 +26,15 @@ namespace TRPG.src
         {
             Sprite.Draw(spriteBatch, Location);
         }
+        public void DrawIcon(SpriteBatch spriteBatch, int posX, int posY, int iconWidth, int iconHeight)
+        {
+            int width, height;
+            width = Sprite.WidthDrawn;
+            height = Sprite.HeightDrawn;
+            Sprite.WidthDrawn = iconWidth;
+            Sprite.HeightDrawn = iconHeight;
+            Sprite.Draw(spriteBatch, new Vector2(posX, posY));
+            Resize(width, height);
+        }
     }
 }

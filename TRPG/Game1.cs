@@ -16,12 +16,9 @@ namespace TRPG
         private SpriteBatch _spriteBatch;
 
         private Player _player;
-        private Item _foodChicken;
+        private Item _food1, _food2, _food3, _food4, _food5, _food6;
 
-        private StaticSprite _inventoryWindow;
-        private StaticSprite _inventorySlots;
         private Button _button;
-        private float _slotX, _slotY;
 
         private StaticSprite _guibackground;
         private TiledBackground _background;
@@ -49,8 +46,15 @@ namespace TRPG
         {
             // TODO: Add your initialization logic here
             _player = new Player();
-            _foodChicken = new Item("Chicken");
             _button = new Button();
+
+            _food1 = new Item("Food 1");
+            _food2 = new Item("Food 2");
+            _food3 = new Item("Food 3");
+            _food4 = new Item("Food 4");
+            _food5 = new Item("Food 5");
+            _food6 = new Item("Food 6");
+
             IsMouseVisible = true;
             _currentMS = Mouse.GetState();
             base.Initialize();
@@ -69,9 +73,25 @@ namespace TRPG
 
             Texture2D texture = Content.Load<Texture2D>("WalkingWithFlip");
             _player.SetSprite(texture,4,9);
-            Texture2D texture2 = Content.Load<Texture2D>("FoodChicken");
-            _foodChicken.Sprite = new StaticSprite(texture2, 0, 0, texture2.Width, texture2.Height);
-            _foodChicken.Location = new Vector2(100, 100);
+
+            Texture2D food6 = Content.Load<Texture2D>("25");
+            Texture2D food1 = Content.Load<Texture2D>("6");
+            Texture2D food2 = Content.Load<Texture2D>("28");
+            Texture2D food3 = Content.Load<Texture2D>("31");
+            Texture2D food4 = Content.Load<Texture2D>("32");
+            Texture2D food5 = Content.Load<Texture2D>("14");
+            _food1.Sprite = new StaticSprite(food1);
+            _food2.Sprite = new StaticSprite(food2);
+            _food3.Sprite = new StaticSprite(food3);
+            _food4.Sprite = new StaticSprite(food4);
+            _food5.Sprite = new StaticSprite(food5);
+            _food6.Sprite = new StaticSprite(food6);
+            _player.Take(_food1);
+            _player.Take(_food2);
+            _player.Take(_food3);
+            _player.Take(_food4);
+            _player.Take(_food5);
+            _player.Take(_food6);
 
             Texture2D button = Content.Load<Texture2D>("ButtonInventory");
             _button.SetSprite(button, 0, 0, button.Width, button.Height);
@@ -80,13 +100,7 @@ namespace TRPG
 
             Texture2D inventoryWin = Content.Load<Texture2D>("InventoryWindow");
             Texture2D inventorySlot = Content.Load<Texture2D>("InventorySlots");
-            _inventoryWindow = new StaticSprite(inventoryWin);
-            _inventoryWindow.WidthDrawn = ScreenWidth - _button.WidthDrawn;
-            _inventoryWindow.HeightDrawn = ScreenHeight;
-            _inventorySlots = new StaticSprite(inventorySlot);
-            _inventorySlots.HeightDrawn = _inventoryWindow.HeightDrawn - 150;
-            _slotX = 38;
-            _slotY = 110;
+            _player.Inventory.SetSprite(inventoryWin, inventorySlot);
 
             Texture2D texture1 = Content.Load<Texture2D>("Background");
             _background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
@@ -120,19 +134,17 @@ namespace TRPG
 
             if (_currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed)
             {
-                if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; }
+                if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
             }
 
             if (_showingInventory)
             {
-                if (kstate.IsKeyDown(Keys.A)) { if (_slotX + _inventorySlots.WidthDrawn > 676) { _slotX -= 10; } }
-                if (kstate.IsKeyDown(Keys.D)) { if (_slotX < 38) { _slotX += 10; } }
+                if (kstate.IsKeyDown(Keys.D)) { if (_player.Inventory.CanScrollRight) { _player.Inventory.SlotX -= 10; } }
+                if (kstate.IsKeyDown(Keys.A)) { if (_player.Inventory.CanScrollLeft) { _player.Inventory.SlotX += 10; } }
             }
 
             if (kstate.IsKeyDown(Keys.X)) { _player.Resize(215, 165); }
             if (kstate.IsKeyDown(Keys.Z)) { _player.Resize(107, 83); }
-
-            if (kstate.IsKeyDown(Keys.Space)) { _player.Take(_foodChicken); }
 
             if (kstate.IsKeyDown(Keys.Up))
             {
@@ -216,17 +228,13 @@ namespace TRPG
             {
                 _background.Draw(_spriteBatch);
                 _button.Draw(_spriteBatch);
-                if (!_player.Have("Chicken"))
-                    _foodChicken.Draw(_spriteBatch);
                 _player.Draw(_spriteBatch);
             }
             else
             {
                 _guibackground.Draw(_spriteBatch, new Vector2(0,0));
                 _button.Draw(_spriteBatch);
-                _inventorySlots.Draw(_spriteBatch, new Vector2(_slotX,_slotY));
-                _inventoryWindow.Draw(_spriteBatch, new Vector2(0, 0));
-
+                _player.Inventory.Draw(_spriteBatch, new Rectangle(0, 0, ScreenWidth - _button.WidthDrawn, ScreenHeight));
             }
 
             base.Draw(gameTime);
