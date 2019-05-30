@@ -23,12 +23,15 @@ namespace TRPG
         private Button _button1;
         private Button _button2;
         private Button _button3;
+        private Button _button4;
 
         private StaticSprite _guibackground;
+        private StaticSprite _alert;
         private TiledBackground _background;
 
         private bool _showingInventory;
         private bool _playingMusic;
+        private bool _quitting;
         private MouseState _currentMS, _lastMS;
 
         private Song _bgm;
@@ -42,6 +45,7 @@ namespace TRPG
             Content.RootDirectory = "Content";
             _showingInventory = false;
             _playingMusic = false;
+            _quitting = false;
             MediaPlayer.IsRepeating = true;
         }
         //methods
@@ -59,6 +63,7 @@ namespace TRPG
             _button1 = new Button();
             _button2 = new Button();
             _button3 = new Button();
+            _button4 = new Button();
 
             _food1 = new Item("Food 1");
             _food2 = new Item("Food 2");
@@ -124,6 +129,11 @@ namespace TRPG
             _button3.Resize(100, 100);
             _button3.Location = new Vector2(ScreenWidth - _button3.WidthDrawn, 200);
 
+            Texture2D button4 = Content.Load<Texture2D>("sprites/ButtonQuit");
+            _button4.SetSprite(button4, 0, 0, button4.Width, button4.Height);
+            _button4.Resize(100, 100);
+            _button4.Location = new Vector2(ScreenWidth - _button3.WidthDrawn, 400);
+
             Texture2D inventoryWin = Content.Load<Texture2D>("sprites/InventoryWindow");
             Texture2D inventorySlot = Content.Load<Texture2D>("sprites/InventorySlots");
             _player.Inventory.SetSprite(inventoryWin, inventorySlot);
@@ -136,6 +146,9 @@ namespace TRPG
             _guibackground.HeightDrawn = ScreenHeight;
 
             _bgm = Content.Load<Song>("tracks/BGM");
+
+            Texture2D alert = Content.Load<Texture2D>("sprites/Alert");
+            _alert = new StaticSprite(alert);
         }
 
         /// <summary>
@@ -162,6 +175,11 @@ namespace TRPG
 
             if (_currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed)
             {
+                if(_quitting)
+                {
+                    if (_button.IsPressed(_lastMS.Position)) { _quitting = false; }
+                }
+
                 if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
                 if (_button1.IsPressed(_lastMS.Position)) { _playingMusic = !_playingMusic; if (_playingMusic) { MediaPlayer.Play(_bgm); } else { MediaPlayer.Stop(); } }
 
@@ -173,6 +191,8 @@ namespace TRPG
                 {
                     if (_button3.IsPressed(_lastMS.Position)) { _player.Inventory.Remove("Food 6"); }
                 }
+                if (_button4.IsPressed(_lastMS.Position)) { _quitting = true; }
+
             }
 
             if (_showingInventory)
@@ -278,6 +298,12 @@ namespace TRPG
             }
             _button.Draw(_spriteBatch);
             _button1.Draw(_spriteBatch);
+            _button4.Draw(_spriteBatch);
+
+            if (_quitting) {
+                _alert.Draw(_spriteBatch, new Vector2(200, 200));
+            }
+
             base.Draw(gameTime);
         }
     }
