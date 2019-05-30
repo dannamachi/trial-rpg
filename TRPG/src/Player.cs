@@ -14,8 +14,8 @@ namespace TRPG.src
         //properties
         public float Y { get => _posY; }
         public float X { get => _posX; }
-        public float Width { get => _sprite.WidthDrawn; }
-        public float Height { get => _sprite.HeightDrawn; }
+        public int Width { get => _sprite.WidthDrawn; }
+        public int Height { get => _sprite.HeightDrawn; }
         public float Speed { get => _speed; }
         //constructors
         public Player()
@@ -25,6 +25,11 @@ namespace TRPG.src
             _speed = 100;
         }
         //methods
+        public void Resize(int width, int height)
+        {
+            _sprite.WidthDrawn = width;
+            _sprite.HeightDrawn = height;
+        }
         public void FaceTo(FacingWhichSide side)
         {
             _sprite.Facing = side;
