@@ -11,12 +11,11 @@ namespace TRPG.src
         private float _posY;
         private float _speed;
         private FlippableAnimatedSprite _sprite;
-        private FacingWhichSide _facingside;
         //properties
         public float Y { get => _posY; }
         public float X { get => _posX; }
-        public float Width { get => _sprite.Width; }
-        public float Height { get => _sprite.Height; }
+        public float Width { get => _sprite.WidthDrawn; }
+        public float Height { get => _sprite.HeightDrawn; }
         public float Speed { get => _speed; }
         //constructors
         public Player()
@@ -24,16 +23,15 @@ namespace TRPG.src
             _posX = 0;
             _posY = 0;
             _speed = 100;
-            _facingside = FacingWhichSide.Right;
         }
         //methods
         public void FaceTo(FacingWhichSide side)
         {
-            _facingside = side;
+            _sprite.Facing = side;
         }
         public void UpdateAnimation()
         {
-            _sprite.Update(_facingside);
+            _sprite.Update();
         }
         public bool WillBeWithinRect(float distance, Direction direction, Rectangle rect)
         {
