@@ -47,6 +47,7 @@ namespace TRPG
             _playingMusic = false;
             _quitting = false;
             MediaPlayer.IsRepeating = true;
+            ScreenHeight = 500;
         }
         //methods
         /// <summary>
