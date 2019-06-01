@@ -15,6 +15,7 @@ namespace TRPG
         //fields
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private SpriteFont _font20;
 
         private Player _player;
         private Item _food1, _food2, _food3, _food4, _food5, _food6;
@@ -32,7 +33,6 @@ namespace TRPG
 
         private bool _showingInventory;
         private bool _playingMusic;
-        private bool _quitting;
         private bool _showingAlert;
         private MouseState _currentMS, _lastMS;
 
@@ -47,7 +47,6 @@ namespace TRPG
             Content.RootDirectory = "Content";
             _showingInventory = false;
             _playingMusic = false;
-            _quitting = false;
             _showingAlert = false;
             MediaPlayer.IsRepeating = true;
             ScreenHeight = 500;
@@ -106,6 +105,8 @@ namespace TRPG
 
             Texture2D texture = Content.Load<Texture2D>("sprites/WalkingWithFlip");
             _player.SetSprite(texture,4,9);
+
+            _font20 = Content.Load<SpriteFont>("fonts/Basic20");
 
             Texture2D food6 = Content.Load<Texture2D>("sprites/25");
             Texture2D food1 = Content.Load<Texture2D>("sprites/6");
@@ -315,6 +316,9 @@ namespace TRPG
                 _guibackground.Draw(_spriteBatch, new Vector2(0,0));
                 _player.Inventory.Draw(_spriteBatch, new Rectangle(0, 0, ScreenWidth - _button.WidthDrawn, ScreenHeight));
                 _button3.Draw(_spriteBatch);
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(_font20, "Inventory", new Vector2(150, 50), Color.Red);
+                _spriteBatch.End();
             }
             _button.Draw(_spriteBatch);
             _button1.Draw(_spriteBatch);

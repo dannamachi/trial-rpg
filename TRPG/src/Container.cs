@@ -42,7 +42,8 @@ namespace TRPG.src
         {
             if (Count < Capacity)
             {
-                _items.Add(itm);
+                if (!_items.Contains(itm))
+                    _items.Add(itm);
             }
             return HasSpace;
         }
