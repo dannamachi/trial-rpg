@@ -25,6 +25,8 @@ namespace TRPG
         private Button _button3;
         private Button _button4;
 
+        private InteractiveRect _alertBox;
+
         private StaticSprite _guibackground;
         private StaticSprite _alert;
         private TiledBackground _background;
@@ -32,6 +34,7 @@ namespace TRPG
         private bool _showingInventory;
         private bool _playingMusic;
         private bool _quitting;
+        private bool _showingAlert;
         private MouseState _currentMS, _lastMS;
 
         private Song _bgm;
@@ -46,10 +49,15 @@ namespace TRPG
             _showingInventory = false;
             _playingMusic = false;
             _quitting = false;
+            _showingAlert = false;
             MediaPlayer.IsRepeating = true;
             ScreenHeight = 500;
         }
         //methods
+        public void CloseAlert()
+        {
+            _showingAlert = false;
+        }
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -75,6 +83,7 @@ namespace TRPG
 
             IsMouseVisible = true;
             _currentMS = Mouse.GetState();
+
             base.Initialize();
         }
 
@@ -149,7 +158,9 @@ namespace TRPG
             _bgm = Content.Load<Song>("tracks/BGM");
 
             Texture2D alert = Content.Load<Texture2D>("sprites/Alert");
-            _alert = new StaticSprite(alert);
+            _alertBox = new InteractiveRect(alert, 300, 300, _button);
+            _alertBox.ClickQuit += new InteractiveRect.ClickEvent(CloseAlert);
+
         }
 
         /// <summary>
@@ -176,6 +187,10 @@ namespace TRPG
 
             if (_currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed)
             {
+                if (_showingAlert)
+                {
+                    _alertBox.CheckEvent(_lastMS.Position);
+                }
                 if(_quitting)
                 {
                     if (_button.IsPressed(_lastMS.Position)) { _quitting = false; }
@@ -192,7 +207,7 @@ namespace TRPG
                 {
                     if (_button3.IsPressed(_lastMS.Position)) { _player.Inventory.Remove("Food 6"); }
                 }
-                if (_button4.IsPressed(_lastMS.Position)) { _quitting = true; }
+                if (_button4.IsPressed(_lastMS.Position)) { _showingAlert = true; }
 
             }
 
@@ -301,8 +316,8 @@ namespace TRPG
             _button1.Draw(_spriteBatch);
             _button4.Draw(_spriteBatch);
 
-            if (_quitting) {
-                _alert.Draw(_spriteBatch, new Vector2(200, 200));
+            if (_showingAlert) {
+                _alertBox.Draw(_spriteBatch, new Vector2(200, 200));
             }
 
             base.Draw(gameTime);
