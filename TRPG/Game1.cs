@@ -25,10 +25,9 @@ namespace TRPG
         private Button _button3;
         private Button _button4;
 
-        private InteractiveRect _alertBox;
+        private AlertRect _alertBox;
 
         private StaticSprite _guibackground;
-        private StaticSprite _alert;
         private TiledBackground _background;
 
         private bool _showingInventory;
@@ -57,6 +56,13 @@ namespace TRPG
         public void CloseAlert()
         {
             _showingAlert = false;
+        }
+
+        public void PlayMusic()
+        {
+            _playingMusic = true;
+            MediaPlayer.Play(_bgm);
+            CloseAlert();
         }
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -157,9 +163,11 @@ namespace TRPG
 
             _bgm = Content.Load<Song>("tracks/BGM");
 
-            Texture2D alert = Content.Load<Texture2D>("sprites/Alert");
-            _alertBox = new InteractiveRect(alert, 300, 300, _button);
-            _alertBox.ClickQuit += new InteractiveRect.ClickEvent(CloseAlert);
+            Texture2D alert = Content.Load<Texture2D>("sprites/Popup");
+            Texture2D yesno = Content.Load<Texture2D>("sprites/buttonYesNo");
+            _alertBox = new AlertRect(alert, yesno, 300, 200, new Vector2(100,100));
+            _alertBox.ClickYes += new InteractiveRect.ClickEvent(CloseAlert);
+            _alertBox.ClickNo += new InteractiveRect.ClickEvent(PlayMusic);
 
         }
 
@@ -190,10 +198,6 @@ namespace TRPG
                 if (_showingAlert)
                 {
                     _alertBox.CheckEvent(_lastMS.Position);
-                }
-                if(_quitting)
-                {
-                    if (_button.IsPressed(_lastMS.Position)) { _quitting = false; }
                 }
 
                 if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
@@ -317,7 +321,7 @@ namespace TRPG
             _button4.Draw(_spriteBatch);
 
             if (_showingAlert) {
-                _alertBox.Draw(_spriteBatch, new Vector2(200, 200));
+                _alertBox.Draw(_spriteBatch);
             }
 
             base.Draw(gameTime);

@@ -4,42 +4,26 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TRPG.src
 {
-    public class InteractiveRect
+    public abstract class InteractiveRect
     {
-        private Dictionary<Button, ClickEvent> _buttonDict;
-        private Dictionary<string, ClickEvent> _eventDict;
+        protected Dictionary<string,Button> _buttonDict;
 
         public StaticSprite Sprite { get; set; }
+        public Vector2 Location { get; set; }
 
-        public InteractiveRect(Texture2D texture, int widthDrawn, int heightDrawn)
+        public InteractiveRect(Texture2D texture, int widthDrawn, int heightDrawn, Vector2 location)
         {
-            _buttonDict = new Dictionary<Button, ClickEvent>();
-            _eventDict = new Dictionary<string, ClickEvent>();
+            _buttonDict = new Dictionary<string, Button>();
             Sprite = new StaticSprite(texture);
             Sprite.WidthDrawn = widthDrawn;
             Sprite.HeightDrawn = heightDrawn;
+            Location = location;
         }
 
-        private bool HasEvent(string eventname)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (string name in _eventDict.Keys)
-            {
-                if (name == eventname) { return true; }
-            }
-            return false;
-        }
-
-        public void SetButton(Button button, string eventname)
-        {
-            if (HasEvent(eventname)) {
-                _buttonDict[button] = _eventDict[eventname];
-            }
-        }
-
-        public void Draw(SpriteBatch spriteBatch, Vector2 location)
-        {
-            Sprite.Draw(spriteBatch, location);
-            foreach (Button button in _buttonDict.Keys)
+            Sprite.Draw(spriteBatch, Location);
+            foreach (Button button in _buttonDict.Values)
             {
                 button.Draw(spriteBatch);
             }
@@ -47,22 +31,11 @@ namespace TRPG.src
 
         public delegate void ClickEvent();
 
-        public event ClickEvent ClickQuit;
-
         //protected void OnClickQuit()
         //{
         //    ClickQuit?.Invoke();
         //}
 
-        public void CheckEvent(Point mousept)
-        {
-            foreach (Button button in _buttonDict.Keys)
-            {
-                if (button.IsPressed(mousept))
-                {
-                    _buttonDict[button]?.Invoke();
-                }
-            }
-        }
+        public abstract void CheckEvent(Point mousept);
     }
 }
