@@ -19,8 +19,11 @@ namespace TRPG.src
             buNo.Resize(Sprite.WidthDrawn / 5, Sprite.HeightDrawn / 5);
             buNo.Location = new Vector2(Location.X + Sprite.WidthDrawn / 2, Location.Y + Sprite.HeightDrawn * 3 / 4);
 
-            _buttonDict["yes"] = buYes;
-            _buttonDict["no"] = buNo;
+            _buttonDict[buYes] = "yes";
+            _buttonDict[buNo] = "no";
+
+            _eventDict["yes"] = new EventHandler(OnClickYes);
+            _eventDict["no"] = new EventHandler(OnClickNo);
         }
 
         private void OnClickYes()
@@ -34,12 +37,11 @@ namespace TRPG.src
 
         public override void CheckEvent(Point mousept)
         {
-            foreach (string buttonname in _buttonDict.Keys)
+            foreach (Button button in _buttonDict.Keys)
             {
-                if (_buttonDict[buttonname].IsPressed(mousept))
+                if (button.IsPressed(mousept))
                 {
-                    if (buttonname == "yes") { OnClickYes(); break; }
-                    if (buttonname == "no") { OnClickNo(); break; }
+                    _eventDict[_buttonDict[button]]();
                 }
             }
         }
