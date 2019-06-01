@@ -15,7 +15,7 @@ namespace TRPG
         //fields
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _font20;
+        private static SpriteFont _font20;
 
         private Player _player;
         private Item _food1, _food2, _food3, _food4, _food5, _food6;
@@ -38,6 +38,7 @@ namespace TRPG
 
         private Song _bgm;
         //properties
+        public static SpriteFont Font20 { get => _font20; }
         public int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
         public int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
         //constructors
@@ -153,7 +154,8 @@ namespace TRPG
 
             Texture2D inventoryWin = Content.Load<Texture2D>("sprites/InventoryWindow");
             Texture2D inventorySlot = Content.Load<Texture2D>("sprites/InventorySlots");
-            _player.Inventory.SetSprite(inventoryWin, inventorySlot);
+            Texture2D alert = Content.Load<Texture2D>("sprites/Popup");
+            _player.Inventory.SetSprite(inventoryWin, inventorySlot, alert);
 
             Texture2D texture1 = Content.Load<Texture2D>("sprites/Background");
             _background = new TiledBackground(texture1, 7, 8, ScreenWidth, ScreenHeight);
@@ -164,7 +166,6 @@ namespace TRPG
 
             _bgm = Content.Load<Song>("tracks/BGM");
 
-            Texture2D alert = Content.Load<Texture2D>("sprites/Popup");
             Texture2D yesno = Content.Load<Texture2D>("sprites/buttonYesNo");
             _alertBox = new AlertRect(alert, yesno, 300, 200, new Vector2(100,100));
             _alertBox.ClickYes += new InteractiveRect.ClickEvent(CloseAlert);
@@ -220,6 +221,7 @@ namespace TRPG
             {
                 if (kstate.IsKeyDown(Keys.D)) { if (_player.Inventory.CanScrollRight) { _player.Inventory.SlotX -= 10; } }
                 if (kstate.IsKeyDown(Keys.A)) { if (_player.Inventory.CanScrollLeft) { _player.Inventory.SlotX += 10; } }
+                _player.Inventory.CheckShowDetail(_currentMS.Position);
             }
 
             if (kstate.IsKeyDown(Keys.X)) { _player.Resize(215, 165); }
