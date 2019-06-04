@@ -97,8 +97,6 @@ namespace TRPG
             _button = new Button();
             _button1 = new Button();
             _button2 = new Button();
-            _button3 = new Button();
-            _button4 = new Button();
 
 
             IsMouseVisible = true;
@@ -135,21 +133,6 @@ namespace TRPG
             _button1.SetSprite(button1, 0, 0, button1.Width, button1.Height);
             _button1.Resize(100, 100);
             _button1.Location = new Vector2(ScreenWidth - _button1.WidthDrawn, 100);
-
-            Texture2D button2 = Content.Load<Texture2D>("sprites/ButtonTake");
-            _button2.SetSprite(button2, 0, 0, button2.Width, button2.Height);
-            _button2.Resize(100, 100);
-            _button2.Location = new Vector2(ScreenWidth - _button2.WidthDrawn, 200);
-
-            Texture2D button3 = Content.Load<Texture2D>("sprites/ButtonUse");
-            _button3.SetSprite(button3, 0, 0, button3.Width, button3.Height);
-            _button3.Resize(100, 100);
-            _button3.Location = new Vector2(ScreenWidth - _button3.WidthDrawn, 200);
-
-            Texture2D button4 = Content.Load<Texture2D>("sprites/ButtonQuit");
-            _button4.SetSprite(button4, 0, 0, button4.Width, button4.Height);
-            _button4.Resize(100, 100);
-            _button4.Location = new Vector2(ScreenWidth - _button3.WidthDrawn, 400);
 
             Texture2D inventoryWin = Content.Load<Texture2D>("sprites/InventoryWindow");
             Texture2D inventorySlot = Content.Load<Texture2D>("sprites/InventorySlots");
@@ -209,8 +192,6 @@ namespace TRPG
                 }
                 
                 if (_button1.IsPressed(_lastMS.Position)) { _playingMusic = !_playingMusic; if (_playingMusic) { MediaPlayer.Play(_bgm); } else { MediaPlayer.Stop(); } }
-
-                if (_button4.IsPressed(_lastMS.Position)) { _gameState = GameState.Warning; }
 
             }
 

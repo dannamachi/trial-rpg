@@ -6,10 +6,15 @@ namespace TRPG.src
 {
     public class AlertRect : InteractiveRect
     {
+        public TextBox _textbox;
+
         public event ClickEvent ClickNo, ClickYes;
 
         public AlertRect(Texture2D textureFrame, Texture2D buttons, int width, int height, Vector2 location) : base(textureFrame,width,height,location)
         {
+            //text
+            _textbox = new TextBox("");
+            //button + events
             Button buYes = new Button();
             Button buNo = new Button();
             buYes.SetSprite(buttons, 0, 0, buttons.Width / 2, buttons.Height);
@@ -24,6 +29,19 @@ namespace TRPG.src
 
             _eventDict["yes"] = new EventHandler(OnClickYes);
             _eventDict["no"] = new EventHandler(OnClickNo);
+        }
+
+        public void SetText(string text)
+        {
+            _textbox.AddLine(text);
+        }
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+            for (int i = 0; i < _textbox.LineCount; i++)
+            {
+                spriteBatch.DrawString(Game1.Font20, _textbox.GetLine(i), new Vector2(Location.X + Sprite.WidthDrawn / 10, Location.Y + Sprite.HeightDrawn / 10 + i * 25), Color.Blue);
+            }
         }
 
         private void OnClickYes()

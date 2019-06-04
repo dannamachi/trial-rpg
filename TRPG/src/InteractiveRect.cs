@@ -22,7 +22,7 @@ namespace TRPG.src
             Location = location;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             Sprite.Draw(spriteBatch, Location);
             foreach (Button button in _buttonDict.Keys)
