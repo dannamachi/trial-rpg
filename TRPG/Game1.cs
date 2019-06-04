@@ -4,21 +4,37 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 using TRPG.src;
+using TRPG.src.modules;
 
 namespace TRPG
 {
+    public enum GameState
+    {
+        Exploring,
+        Pausing,
+        Talking,
+        Warning
+    }
+    public enum Showing
+    {
+        Inventory,
+        Status,
+        Quest,
+        Map,
+        Settings,
+        Nothing
+    }
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
     public class Game1 : Game
     {
         //fields
-        private GraphicsDeviceManager _graphics;
+        private static GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private static SpriteFont _font20;
 
         private Player _player;
-        private Item _food1, _food2, _food3, _food4, _food5, _food6;
 
         private Button _button;
         private Button _button1;
@@ -31,31 +47,35 @@ namespace TRPG
         private StaticSprite _guibackground;
         private TiledBackground _background;
 
-        private bool _showingInventory;
         private bool _playingMusic;
-        private bool _showingAlert;
+        private GameState _gameState;
         private MouseState _currentMS, _lastMS;
 
         private Song _bgm;
         //properties
+        private Showing Showing { get; set; }
+        public bool IsLeftClicked
+        {
+            get { return _currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed; }
+        }
+        public TiledBackground GameBackground { get => _background; }
+        public Player Player { get => _player; }
         public static SpriteFont Font20 { get => _font20; }
-        public int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
-        public int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
+        public static int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
+        public static int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
         //constructors
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            _showingInventory = false;
             _playingMusic = false;
-            _showingAlert = false;
             MediaPlayer.IsRepeating = true;
             ScreenHeight = 500;
         }
         //methods
         public void CloseAlert()
         {
-            _showingAlert = false;
+            _gameState = GameState.Exploring;
         }
 
         public void PlayMusic()
@@ -80,15 +100,11 @@ namespace TRPG
             _button3 = new Button();
             _button4 = new Button();
 
-            _food1 = new Item("Food 1");
-            _food2 = new Item("Food 2");
-            _food3 = new Item("Food 3");
-            _food4 = new Item("Food 4");
-            _food5 = new Item("Food 5");
-            _food6 = new Item("Food 6");
 
             IsMouseVisible = true;
             _currentMS = Mouse.GetState();
+            _gameState = GameState.Exploring;
+            Showing = Showing.Nothing;
 
             base.Initialize();
         }
@@ -109,23 +125,6 @@ namespace TRPG
 
             _font20 = Content.Load<SpriteFont>("fonts/Basic20");
 
-            Texture2D food6 = Content.Load<Texture2D>("sprites/25");
-            Texture2D food1 = Content.Load<Texture2D>("sprites/6");
-            Texture2D food2 = Content.Load<Texture2D>("sprites/28");
-            Texture2D food3 = Content.Load<Texture2D>("sprites/31");
-            Texture2D food4 = Content.Load<Texture2D>("sprites/32");
-            Texture2D food5 = Content.Load<Texture2D>("sprites/14");
-            _food1.Sprite = new StaticSprite(food1);
-            _food2.Sprite = new StaticSprite(food2);
-            _food3.Sprite = new StaticSprite(food3);
-            _food4.Sprite = new StaticSprite(food4);
-            _food5.Sprite = new StaticSprite(food5);
-            _food6.Sprite = new StaticSprite(food6);
-            _player.Take(_food1);
-            _player.Take(_food2);
-            _player.Take(_food3);
-            _player.Take(_food4);
-            _player.Take(_food5);
 
             Texture2D button = Content.Load<Texture2D>("sprites/ButtonInventory");
             _button.SetSprite(button, 0, 0, button.Width, button.Height);
@@ -195,102 +194,37 @@ namespace TRPG
             _currentMS = Mouse.GetState();
             float distance = _player.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (_currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed)
+            if (IsLeftClicked)
             {
-                if (_showingAlert)
+                if (_gameState == GameState.Warning)
                 {
                     _alertBox.CheckEvent(_lastMS.Position);
                 }
 
-                if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
+                if (_button.IsPressed(_lastMS.Position))
+                {
+                    if (Showing != Showing.Inventory) { _player.Inventory.ResetScroll(); }
+                    _gameState = GameState.Pausing;
+                    Showing = Showing.Inventory; 
+                }
+                
                 if (_button1.IsPressed(_lastMS.Position)) { _playingMusic = !_playingMusic; if (_playingMusic) { MediaPlayer.Play(_bgm); } else { MediaPlayer.Stop(); } }
 
-                if (!_showingInventory)
-                {
-                    if (_button2.IsPressed(_lastMS.Position)) { _player.Take(_food6); }
-                }
-                else
-                {
-                    if (_button3.IsPressed(_lastMS.Position)) { _player.Inventory.Remove("Food 6"); }
-                }
-                if (_button4.IsPressed(_lastMS.Position)) { _showingAlert = true; }
+                if (_button4.IsPressed(_lastMS.Position)) { _gameState = GameState.Warning; }
 
             }
 
-            if (_showingInventory)
+            if (Showing == Showing.Inventory)
             {
-                if (kstate.IsKeyDown(Keys.D)) { if (_player.Inventory.CanScrollRight) { _player.Inventory.SlotX -= 10; } }
-                if (kstate.IsKeyDown(Keys.A)) { if (_player.Inventory.CanScrollLeft) { _player.Inventory.SlotX += 10; } }
+                UserInput.ProcessScroll(_player, kstate);
                 _player.Inventory.CheckShowDetail(_currentMS.Position);
             }
 
-            if (kstate.IsKeyDown(Keys.X)) { _player.Resize(215, 165); }
-            if (kstate.IsKeyDown(Keys.Z)) { _player.Resize(107, 83); }
+            if (_gameState == GameState.Exploring)
+                UserInput.ProcessMovement(distance, _player, _background, kstate);
 
-            if (kstate.IsKeyDown(Keys.Up))
-            {
-                if (!_background.Move(distance, Direction.South))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.North, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.North, distance);
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.North, new Rectangle(0, ScreenHeight / 3, ScreenWidth, ScreenHeight * 2 / 3)))
-                        _player.Move(Direction.North, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            else if (kstate.IsKeyDown(Keys.Down)) 
-            {
-                if (!_background.Move(distance, Direction.North))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.South, distance); 
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight * 2 / 3)))
-                        _player.Move(Direction.South, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            if (kstate.IsKeyDown(Keys.Left))
-            {
-                _player.FaceTo(FacingWhichSide.Left);
-                if (!_background.Move(distance, Direction.East))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.West, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.West, distance);
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.West, new Rectangle(ScreenWidth / 3, 0, ScreenWidth * 2 / 3, ScreenHeight / 3)))
-                        _player.Move(Direction.West, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            else if (kstate.IsKeyDown(Keys.Right))
-            {
-                _player.FaceTo(FacingWhichSide.Right);
-                if (!_background.Move(distance, Direction.West))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.East, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.East, distance);
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.East, new Rectangle(0, 0, ScreenWidth * 2 / 3, ScreenHeight)))
-                        _player.Move(Direction.East, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //Exit();
 
             // TODO: Add your update logic here
 
@@ -305,28 +239,29 @@ namespace TRPG
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             // TODO: Add your drawing code here
-            if (!_showingInventory)
+            if (_gameState == GameState.Exploring)
             {
                 _background.Draw(_spriteBatch);
                 _button.Draw(_spriteBatch);
                 _player.Draw(_spriteBatch);
                 _button2.Draw(_spriteBatch);
-                if (!_player.Have("Food 6")) { _food6.Draw(_spriteBatch); }
             }
-            else
+            else if (_gameState == GameState.Pausing)
             {
-                _guibackground.Draw(_spriteBatch, new Vector2(0,0));
-                _player.Inventory.Draw(_spriteBatch, new Rectangle(0, 0, ScreenWidth - _button.WidthDrawn, ScreenHeight));
-                _button3.Draw(_spriteBatch);
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(_font20, "Inventory", new Vector2(150, 50), Color.Red);
-                _spriteBatch.End();
+                if (Showing == Showing.Inventory) {
+                    _guibackground.Draw(_spriteBatch, new Vector2(0, 0));
+                    _player.Inventory.Draw(_spriteBatch, new Rectangle(0, 0, ScreenWidth - _button.WidthDrawn, ScreenHeight));
+                    _button3.Draw(_spriteBatch);
+                    _spriteBatch.Begin();
+                    _spriteBatch.DrawString(_font20, "Inventory", new Vector2(150, 50), Color.Red);
+                    _spriteBatch.End();
+                }
             }
             _button.Draw(_spriteBatch);
             _button1.Draw(_spriteBatch);
             _button4.Draw(_spriteBatch);
 
-            if (_showingAlert) {
+            if (_gameState == GameState.Warning) {
                 _alertBox.Draw(_spriteBatch);
             }
 
