@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 using TRPG.src;
+using TRPG.src.modules;
 
 namespace TRPG
 {
@@ -13,7 +14,7 @@ namespace TRPG
     public class Game1 : Game
     {
         //fields
-        private GraphicsDeviceManager _graphics;
+        private static GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private static SpriteFont _font20;
 
@@ -38,9 +39,15 @@ namespace TRPG
 
         private Song _bgm;
         //properties
+        public bool IsLeftClicked
+        {
+            get { return _currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed; }
+        }
+        public TiledBackground GameBackground { get => _background; }
+        public Player Player { get => _player; }
         public static SpriteFont Font20 { get => _font20; }
-        public int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
-        public int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
+        public static int ScreenWidth { get => _graphics.PreferredBackBufferWidth; set { _graphics.PreferredBackBufferWidth = value; _graphics.ApplyChanges(); } }
+        public static int ScreenHeight { get => _graphics.PreferredBackBufferHeight; set { _graphics.PreferredBackBufferHeight = value; _graphics.ApplyChanges(); } }
         //constructors
         public Game1()
         {
@@ -195,7 +202,7 @@ namespace TRPG
             _currentMS = Mouse.GetState();
             float distance = _player.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (_currentMS.LeftButton == ButtonState.Released && _lastMS.LeftButton == ButtonState.Pressed)
+            if (IsLeftClicked)
             {
                 if (_showingAlert)
                 {
@@ -205,89 +212,18 @@ namespace TRPG
                 if (_button.IsPressed(_lastMS.Position)) { _showingInventory = !_showingInventory; if (!_showingInventory) { _player.Inventory.ResetScroll(); } }
                 if (_button1.IsPressed(_lastMS.Position)) { _playingMusic = !_playingMusic; if (_playingMusic) { MediaPlayer.Play(_bgm); } else { MediaPlayer.Stop(); } }
 
-                if (!_showingInventory)
-                {
-                    if (_button2.IsPressed(_lastMS.Position)) { _player.Take(_food6); }
-                }
-                else
-                {
-                    if (_button3.IsPressed(_lastMS.Position)) { _player.Inventory.Remove("Food 6"); }
-                }
                 if (_button4.IsPressed(_lastMS.Position)) { _showingAlert = true; }
 
             }
 
             if (_showingInventory)
             {
-                if (kstate.IsKeyDown(Keys.D)) { if (_player.Inventory.CanScrollRight) { _player.Inventory.SlotX -= 10; } }
-                if (kstate.IsKeyDown(Keys.A)) { if (_player.Inventory.CanScrollLeft) { _player.Inventory.SlotX += 10; } }
+                UserInput.ProcessScroll(_player, kstate);
                 _player.Inventory.CheckShowDetail(_currentMS.Position);
             }
 
-            if (kstate.IsKeyDown(Keys.X)) { _player.Resize(215, 165); }
-            if (kstate.IsKeyDown(Keys.Z)) { _player.Resize(107, 83); }
 
-            if (kstate.IsKeyDown(Keys.Up))
-            {
-                if (!_background.Move(distance, Direction.South))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.North, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.North, distance);
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.North, new Rectangle(0, ScreenHeight / 3, ScreenWidth, ScreenHeight * 2 / 3)))
-                        _player.Move(Direction.North, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            else if (kstate.IsKeyDown(Keys.Down)) 
-            {
-                if (!_background.Move(distance, Direction.North))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.South, distance); 
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.South, new Rectangle(0, 0, ScreenWidth, ScreenHeight * 2 / 3)))
-                        _player.Move(Direction.South, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            if (kstate.IsKeyDown(Keys.Left))
-            {
-                _player.FaceTo(FacingWhichSide.Left);
-                if (!_background.Move(distance, Direction.East))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.West, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.West, distance);
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.West, new Rectangle(ScreenWidth / 3, 0, ScreenWidth * 2 / 3, ScreenHeight / 3)))
-                        _player.Move(Direction.West, distance);
-                }
-                _player.UpdateAnimation();
-            }
-
-            else if (kstate.IsKeyDown(Keys.Right))
-            {
-                _player.FaceTo(FacingWhichSide.Right);
-                if (!_background.Move(distance, Direction.West))
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.East, new Rectangle(0, 0, ScreenWidth, ScreenHeight)))
-                        _player.Move(Direction.East, distance);
-                }
-                else
-                {
-                    if (_player.WillBeWithinRect(distance, Direction.East, new Rectangle(0, 0, ScreenWidth * 2 / 3, ScreenHeight)))
-                        _player.Move(Direction.East, distance);
-                }
-                _player.UpdateAnimation();
-            }
+            UserInput.ProcessMovement(distance, _player, _background, kstate);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();

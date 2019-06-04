@@ -52,6 +52,7 @@
     <Compile Include="src\InteractiveRect.cs" />
     <Compile Include="src\Inventory.cs" />
     <Compile Include="src\Item.cs" />
+    <Compile Include="src\modules\UserInput.cs" />
     <Compile Include="src\Player.cs" />
     <Compile Include="src\Sprite.cs" />
     <Compile Include="src\StaticSprite.cs" />
