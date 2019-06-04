@@ -57,6 +57,7 @@
     <Compile Include="src\Player.cs" />
     <Compile Include="src\Sprite.cs" />
     <Compile Include="src\StaticSprite.cs" />
+    <Compile Include="src\TextBox.cs" />
     <Compile Include="src\TextSprite.cs" />
     <Compile Include="src\TiledBackground.cs" />
   </ItemGroup>
