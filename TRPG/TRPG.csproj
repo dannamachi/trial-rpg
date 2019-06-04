@@ -48,6 +48,7 @@
     <Compile Include="src\AnimatedSprite.cs" />
     <Compile Include="src\Button.cs" />
     <Compile Include="src\Container.cs" />
+    <Compile Include="src\controller\ContentManager.cs" />
     <Compile Include="src\FlippableAnimatedSprite.cs" />
     <Compile Include="src\InteractiveRect.cs" />
     <Compile Include="src\Inventory.cs" />
