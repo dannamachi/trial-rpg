@@ -15,8 +15,14 @@ namespace SEVirtual {
     }
     //properties
     //methods
-    public override void FlippedBy(Player p) {
-      
+    protected override void PerformFlip(Player p) {
+      foreach (string questName in _questNames) {
+        if (p.Has(questName,"Q")) {
+          if (p.Find(questName,"Q").IsFulfilledBy(p)) {
+            p.Complete(questName);
+          }
+        }
+      }
     }
   }
 }

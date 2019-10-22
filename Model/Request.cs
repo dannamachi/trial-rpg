@@ -15,7 +15,7 @@ namespace SEVirtual {
     //properties
     //methods
     ///method to determine if request is fulfilled
-    ///0-1:artifact no/yes
+    ///0-1: artifact no/yes
     ///2-3: quest no/yes
     public bool IsFulfilledBy(Player p) {
       bool result = false;
