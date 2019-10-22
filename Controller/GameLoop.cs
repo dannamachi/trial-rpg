@@ -15,8 +15,17 @@ namespace SEVirtual {
     }
     //properties
     //methods
+    private bool IsValidInput(ConsoleKeyInfo cki, List<ConsoleKey> validCKs) {
+      bool result = false;
+      foreach (ConsoleKey CK in validCKs) {
+        if (cki.Key == CK) {
+          result = true;
+        }
+      }
+      return result;
+    }
     public void ProcessInput() {
-
+      //look into linking ConsokeKey and PlayerAction 
     }
     public void Display() {
 
