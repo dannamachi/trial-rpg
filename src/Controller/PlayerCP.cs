@@ -8,7 +8,7 @@ namespace SEVirtual {
     GAME
     }
 
-    public class PlayerCP {
+    public class PlayerCP : ViewLens {
         //fields
         private List<PlayerAction> _pacts;
         //constructors
@@ -17,6 +17,40 @@ namespace SEVirtual {
             Player = new Player();
         }
         //properties
+        private string ModeInfo
+        {
+            get
+            {
+                string text = "";
+                switch (Mode)
+                {
+                    case GameMode.GAME:
+                        text += "GAME IN PROGRESS";
+                        text += Player.Info;
+                        text += ">>>Press wasd for movement\n";
+                        text += ">>>Press q to quit\n";
+                        return text;
+                    case GameMode.MENU:
+                        text += "MAIN MENU";
+                        text += ">>>Press z to play\n";
+                        text += ">>>Press q to quit\n";
+                        return text;
+                }
+                return "Error\n";
+            }
+        }
+        public string DisplayString
+        {
+            get
+            {
+                //assume console so using \n 
+                string text = "";
+                text += "----------";
+                text += ModeInfo;
+                text += "----------";
+                return text;
+            }
+        }
         public PlayerAction PlayerAction
         {
             get
@@ -30,7 +64,7 @@ namespace SEVirtual {
             }
         }
         public Player Player { get; set; }
-        public GameMode Mode { get;set; }
+        public GameMode Mode { get; set; }
         //methods
         private void PerformAction_Void(RRLine line)
         {

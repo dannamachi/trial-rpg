@@ -16,6 +16,31 @@ namespace SEVirtual {
             _arts = new Inventory();
         }
         //properties
+        public string Info
+        {
+            get
+            {
+                //assume console so use \n and \t
+                string text = "";
+                text += "Current at tile " + Tile.X + " - " + Tile.Y + "\n";
+                text += "Doing quest(s):\n";
+                foreach (string q in _quests.NameList)
+                {
+                    text += "\t" + q + "\n";
+                }
+                text += "Inventory:\n";
+                foreach (string a in _arts.NameList)
+                {
+                    text += "\t" + a + "\n";
+                }
+                text += "Completed quest(s):\n";
+                foreach (string q in _cquests.NameList)
+                {
+                    text += "\t" + q + "\n";
+                }
+                return text;
+            }
+        }
         public TileV Tile { get;set; }
         //methods
         public void FlipTile() {
