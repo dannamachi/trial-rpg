@@ -16,6 +16,21 @@ namespace SEVirtual {
             _mode = mode;
         }
         //properties
+        public GameMode Mode { get => _mode; }
+        public List<RRLine> ValidLines { get => _actionLines; }
+        public List<PlayerInput> ValidInputs
+        {
+            get
+            {
+                List<PlayerInput> inputs = new List<PlayerInput>();
+                foreach (RRLine line in _actionLines)
+                {
+                    if (line.Activated)
+                        inputs.Add(line.PlayerInput);
+                }
+                return inputs;
+            }
+        }
         //methods
         public void ActivateLines() {
             foreach (RRLine line in _actionLines) {

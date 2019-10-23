@@ -32,7 +32,9 @@ namespace SEVirtual {
             List<RRLine> menulist = new List<RRLine>();
 
             RRLine quitline = new RRLine(new ActionVoid(_game.QuitTheGame));
+            quitline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
             RRLine playline = new RRLine(new ActionVoid(_game.PlayTheGame));
+            playline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
 
             menulist.Add(quitline);
             menulist.Add(playline);
@@ -43,13 +45,26 @@ namespace SEVirtual {
             List<RRLine> gamelist = new List<RRLine>();
 
             RRLine quitline = new RRLine(new ActionVoid(_game.QuitTheGame));
+            quitline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
             RRLine playline = new RRLine(new ActionVoid(_game.PlayTheGame));
-            RRLine moveline = new RRLine(new ActionMove(_player.Move));
+            playline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
+            RRLine movelineW = new RRLine(new ActionMove(_player.Move));
+            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('w', ConsoleKey.W, false, false, false));
+            RRLine movelineD = new RRLine(new ActionMove(_player.Move));
+            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('d', ConsoleKey.D, false, false, false));
+            RRLine movelineS = new RRLine(new ActionMove(_player.Move));
+            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('s', ConsoleKey.S, false, false, false));
+            RRLine movelineA = new RRLine(new ActionMove(_player.Move));
+            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
             RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
+            flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 
             gamelist.Add(quitline);
             gamelist.Add(playline);
-            gamelist.Add(moveline);
+            gamelist.Add(movelineW);
+            gamelist.Add(movelineD);
+            gamelist.Add(movelineS);
+            gamelist.Add(movelineA);
             gamelist.Add(flipline);
 
             return new PlayerAction(gamelist, GameMode.GAME);
