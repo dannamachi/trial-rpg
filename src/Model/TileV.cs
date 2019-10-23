@@ -13,14 +13,18 @@ namespace SEVirtual {
         //fields
         private Dictionary<TDir,TileV> _tileDict;
         //constructors
-        public TileV(Trigger trig, Dictionary<TDir,TileV> tileDict, bool canMoveTo) {
+        public TileV(Trigger trig, Dictionary<TDir,TileV> tileDict, bool canMoveTo, int x, int y) {
             Trigger = trig;
             Blocked = canMoveTo;
             _tileDict = tileDict;
+            X = x;
+            Y = y;
         }
-        public TileV() : this(null,null,false) {}
-        public TileV(Dictionary<TDir,TileV> tileDict) : this(null,tileDict,true) {}
+        public TileV(int x, int y) : this(null,null,false,x,y) {}
+        public TileV(Dictionary<TDir,TileV> tileDict,int x,int y) : this(null,tileDict,true,x,y) {}
         //properties
+        public int X { get; }
+        public int Y { get; }
         public Trigger Trigger { get;set; }
         public bool Blocked { get;set; }
         //methods
