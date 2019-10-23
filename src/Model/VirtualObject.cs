@@ -7,6 +7,7 @@ namespace SEVirtual {
         //fields
         //constructors
         //properties
+        public string Name { get; set; }
         //methods
         public abstract bool IsCalled(string name);
     }

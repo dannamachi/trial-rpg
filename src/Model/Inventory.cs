@@ -11,6 +11,18 @@ namespace SEVirtual {
             _arts = new List<VirtualObject>();
         }
         //properties
+        public List<string> NameList
+        {
+            get 
+            {
+                List<string> namelist = new List<string>();
+                foreach (VirtualObject vo in _arts)
+                {
+                    namelist.Add(vo.Name);
+                }
+                return namelist;
+            }
+        }
         //methods
         ///add an artifact to inventory
         public void Add(VirtualObject art) {

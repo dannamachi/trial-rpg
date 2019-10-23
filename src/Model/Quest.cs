@@ -5,11 +5,10 @@ using System.Text;
 namespace SEVirtual {
     public class Quest : VirtualObject{
         //fields
-        private string _name;
         private List<Request> _reqs;
         //constructors
         public Quest(string name, List<Request> requests) {
-            _name = name;
+            Name = name;
             _reqs = new List<Request>();
             foreach (Request req in requests) {
                 _reqs.Add(req);

@@ -5,10 +5,9 @@ using System.Text;
 namespace SEVirtual {
     public class Artifact : VirtualObject {
         //fields
-        private string _name;
         //constructors
         public Artifact(string name) {
-            _name = name;
+            Name = name;
         }
         //properties
         //methods
