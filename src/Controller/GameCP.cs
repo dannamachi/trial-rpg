@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SEVirtual {
-    public class GameCP {
+    public class GameCP : ViewLens {
         //fields
         private PlayerCP _playCP;
         //constructors
@@ -16,6 +16,19 @@ namespace SEVirtual {
             _playCP = CreatePlayCP();
         }
         //properties
+        public string DisplayString
+        {
+            get
+            {
+                string text = "";
+                text += "==========\n";
+                text += "==========\n";
+                text += _playCP.DisplayString;
+                text += "==========\n";
+                text += "==========\n";
+                return text;
+            }
+        }
         public bool IsPlay { get;set; }
         public bool IsQuit { get;set; }
         public bool IsWin { get;set; }

@@ -13,7 +13,7 @@ namespace SEVirtual
         //methods
         public void Display(ViewLens lens)
         {
-            Console.WriteLine(lens.DisplayString);
+            Console.Write(lens.DisplayString);
         }
     }
 }

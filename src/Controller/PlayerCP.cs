@@ -45,9 +45,9 @@ namespace SEVirtual {
             {
                 //assume console so using \n 
                 string text = "";
-                text += "----------";
+                text += "----------\n";
                 text += ModeInfo;
-                text += "----------";
+                text += "----------\n";
                 return text;
             }
         }

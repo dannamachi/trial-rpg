@@ -6,9 +6,11 @@ namespace SEVirtual {
     public class GameLoop {
     //fields
         private GameCP _gameCP;
+        private Viewer _view;
         //constructors
         public GameLoop() {
             _gameCP = new GameCP();
+            _view = new Viewer();
         }
         //properties
         //methods
@@ -26,7 +28,7 @@ namespace SEVirtual {
             _gameCP.PerformAction(input);
         }
         private void Display() {
-
+            _view.Display(_gameCP);
         }
     }
 }
