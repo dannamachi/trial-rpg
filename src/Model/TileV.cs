@@ -17,7 +17,7 @@ namespace SEVirtual {
         //constructors
         public TileV(Trigger trig, bool canMoveTo, int x, int y) {
             Trigger = trig;
-            Blocked = canMoveTo;
+            Blocked = !canMoveTo;
             _x = x;
             _y = y;
             _tileDict = new Dictionary<TDir, TileV>();

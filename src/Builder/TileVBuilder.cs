@@ -9,10 +9,18 @@ namespace SEVirtual
     public class TileVBuilder
     {
         //fields
+        private int _maxcol;
+        private int _maxrow;
         private List<TileV> _tileVs;
         //constructors
-        public TileVBuilder() { }
+        public TileVBuilder() 
+        {
+            _maxcol = 0;
+            _maxrow = 0;
+        }
         //properties
+        public int MaxCol { get => _maxcol; }
+        public int MaxRow { get => _maxrow; }
         //methods
         private TileV GetEmptyTile(int x, int y)
         {
@@ -37,7 +45,7 @@ namespace SEVirtual
                 qdesc = line[z + 1];
                 List<Request> reqs = new List<Request>();
                 reqno = Convert.ToInt32(line[z + 2]);
-                int i = 0;
+                int i = z + 3;
                 while (i < reqno)
                 {
                     objname = line[i];
@@ -86,15 +94,6 @@ namespace SEVirtual
             TileV tile = new TileV(new TriggerF(names), true, x, y);
             return tile;
         }
-        private TileV FindTileAt(List<TileV> tiles, int x, int y)
-        {
-            foreach (TileV tile in tiles)
-            {
-                if (tile.IsAt(x, y))
-                    return tile;
-            }
-            return null;
-        }
         private List<TileV> LinkTileVs(List<TileV> tiles, int max_col, int max_row)
         {
             for (int y = 0; y < max_row; y++)
@@ -105,10 +104,26 @@ namespace SEVirtual
                     if (tile.Blocked == false)
                     {
                         Dictionary<TDir, TileV> tileDict = new Dictionary<TDir, TileV>();
-                        if (x > 0) { tileDict.Add(TDir.LEFT, FindTileAt(tiles, x - 1, y)); }
-                        if (y > 0) { tileDict.Add(TDir.TOP, FindTileAt(tiles, x, y - 1)); }
-                        if (x < max_col - 1) { tileDict.Add(TDir.RIGHT, FindTileAt(tiles, x + 1, y)); }
-                        if (y < max_row - 1) { tileDict.Add(TDir.BOTTOM, FindTileAt(tiles, x, y + 1)); }
+                        if (x > 0) 
+                        { 
+                            if (!FindTileAt(tiles, x - 1, y).Blocked)
+                                tileDict.Add(TDir.LEFT, FindTileAt(tiles, x - 1, y)); 
+                        }
+                        if (y > 0) 
+                        {
+                            if (!FindTileAt(tiles, x, y - 1).Blocked)
+                                tileDict.Add(TDir.TOP, FindTileAt(tiles, x, y - 1));
+                        }
+                        if (x < max_col - 1) 
+                        {
+                            if (!FindTileAt(tiles, x + 1, y).Blocked)
+                                tileDict.Add(TDir.RIGHT, FindTileAt(tiles, x + 1, y));
+                        }
+                        if (y < max_row - 1) 
+                        {
+                            if (!FindTileAt(tiles, x, y + 1).Blocked)
+                                tileDict.Add(TDir.BOTTOM, FindTileAt(tiles, x, y + 1));
+                        }
                         tile.LinkTileDict(tileDict);
                     }
                 }
@@ -160,7 +175,18 @@ namespace SEVirtual
                     }
                 }
                 _tileVs = LinkTileVs(_tileVs, col, row);
+                _maxcol = col;
+                _maxrow = row;
             }
+        }
+        public TileV FindTileAt(List<TileV> tiles, int x, int y)
+        {
+            foreach (TileV tile in tiles)
+            {
+                if (tile.IsAt(x, y))
+                    return tile;
+            }
+            return null;
         }
         public List<TileV> LoadTileVsFromFile()
         {

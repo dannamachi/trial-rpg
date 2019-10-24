@@ -5,7 +5,6 @@ using System.Text;
 namespace SEVirtual {
     public class Player {
         //fields
-        private TileV _tile;
         private Inventory _quests;
         private Inventory _arts;
         private Inventory _cquests;

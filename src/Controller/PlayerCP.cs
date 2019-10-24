@@ -10,6 +10,7 @@ namespace SEVirtual {
 
     public class PlayerCP : ViewLens {
         //fields
+        private List<TileV> _tiles;
         private List<PlayerAction> _pacts;
         //constructors
         public PlayerCP() 
@@ -75,7 +76,7 @@ namespace SEVirtual {
             if (line.PlayerInput.CKI.Key == ConsoleKey.W) { line.Run(TDir.TOP); }
             else if (line.PlayerInput.CKI.Key == ConsoleKey.D) { line.Run(TDir.RIGHT); }
             else if (line.PlayerInput.CKI.Key == ConsoleKey.S) { line.Run(TDir.BOTTOM); }
-            else if (line.PlayerInput.CKI.Key == ConsoleKey.D) { line.Run(TDir.LEFT); }
+            else if (line.PlayerInput.CKI.Key == ConsoleKey.A) { line.Run(TDir.LEFT); }
         }
         public void PerformAction(PlayerInput input)
         {
@@ -101,6 +102,10 @@ namespace SEVirtual {
             }
             //initialize player and tiles n such here
             Mode = GameMode.MENU;
+            TileVBuilder tbuilder= new TileVBuilder();
+            _tiles = tbuilder.LoadTileVsFromFile();
+            Random rand = new Random();
+            Player.Tile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
         }
     }
 }

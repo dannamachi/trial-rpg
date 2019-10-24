@@ -51,11 +51,11 @@ namespace SEVirtual {
             RRLine movelineW = new RRLine(new ActionMove(_player.Move));
             movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('w', ConsoleKey.W, false, false, false));
             RRLine movelineD = new RRLine(new ActionMove(_player.Move));
-            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('d', ConsoleKey.D, false, false, false));
+            movelineD.PlayerInput = new PlayerInput(new ConsoleKeyInfo('d', ConsoleKey.D, false, false, false));
             RRLine movelineS = new RRLine(new ActionMove(_player.Move));
-            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('s', ConsoleKey.S, false, false, false));
+            movelineS.PlayerInput = new PlayerInput(new ConsoleKeyInfo('s', ConsoleKey.S, false, false, false));
             RRLine movelineA = new RRLine(new ActionMove(_player.Move));
-            movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
+            movelineA.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
             RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 

@@ -18,8 +18,8 @@ namespace SEVirtual {
         {
             while (!_gameCP.IsQuit)
             {
-                ProcessInput();
                 Display();
+                ProcessInput();
             }
         }
         private void ProcessInput() {
