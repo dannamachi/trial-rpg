@@ -21,21 +21,21 @@ namespace SEVirtual {
             {
                 //assume console so use \n and \t
                 string text = "";
-                text += "Current at tile " + Tile.X + " - " + Tile.Y + "\n";
-                text += "Doing quest(s):\n";
+                text += "\nCurrently at tile " + Tile.X + " - " + Tile.Y;
+                text += "\nDoing quest(s):";
                 foreach (string q in _quests.NameList)
                 {
-                    text += "\t" + q + "\n";
+                    text += "\n\t" + q;
                 }
-                text += "Inventory:\n";
+                text += "\nInventory:";
                 foreach (string a in _arts.NameList)
                 {
-                    text += "\t" + a + "\n";
+                    text += "\n\t" + a;
                 }
-                text += "Completed quest(s):\n";
+                text += "\nCompleted quest(s):";
                 foreach (string q in _cquests.NameList)
                 {
-                    text += "\t" + q + "\n";
+                    text += "\n\t" + q;
                 }
                 return text;
             }

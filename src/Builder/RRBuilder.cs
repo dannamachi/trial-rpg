@@ -44,10 +44,10 @@ namespace SEVirtual {
         private PlayerAction BuildPActGAME() {
             List<RRLine> gamelist = new List<RRLine>();
 
+            //quitting
             RRLine quitline = new RRLine(new ActionVoid(_game.QuitTheGame));
             quitline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
-            RRLine playline = new RRLine(new ActionVoid(_game.PlayTheGame));
-            playline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
+            //moving
             RRLine movelineW = new RRLine(new ActionMove(_player.Move));
             movelineW.PlayerInput = new PlayerInput(new ConsoleKeyInfo('w', ConsoleKey.W, false, false, false));
             RRLine movelineD = new RRLine(new ActionMove(_player.Move));
@@ -56,11 +56,11 @@ namespace SEVirtual {
             movelineS.PlayerInput = new PlayerInput(new ConsoleKeyInfo('s', ConsoleKey.S, false, false, false));
             RRLine movelineA = new RRLine(new ActionMove(_player.Move));
             movelineA.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
+            //flipline
             RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 
             gamelist.Add(quitline);
-            gamelist.Add(playline);
             gamelist.Add(movelineW);
             gamelist.Add(movelineD);
             gamelist.Add(movelineS);

@@ -5,6 +5,7 @@ using System.Text;
 namespace SEVirtual {
     public class TriggerA : Trigger {
         //fields
+        private bool _isf;
         private List<Artifact> _arts;
         //constructors
         public TriggerA(List<Artifact> arts) : base() {
@@ -12,12 +13,18 @@ namespace SEVirtual {
             foreach (Artifact art in arts) {
                 _arts.Add(art);
             }
+            _isf = false;
         }
         //properties
         //methods
         protected override void PerformFlip(Player p) {
-            foreach (Artifact art in _arts) {
-                p.Add(art);
+            if (!_isf)
+            {
+                foreach (Artifact art in _arts)
+                {
+                    p.Add(art);
+                }
+                _isf = true;
             }
         }
     }

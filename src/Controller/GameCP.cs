@@ -21,11 +21,11 @@ namespace SEVirtual {
             get
             {
                 string text = "";
-                text += "==========\n";
-                text += "==========\n";
+                text += "\n==========";
+                text += "\n==========";
                 text += _playCP.DisplayString;
-                text += "==========\n";
-                text += "==========\n";
+                text += "\n==========";
+                text += "\n==========";
                 return text;
             }
         }

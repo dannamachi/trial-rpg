@@ -26,18 +26,18 @@ namespace SEVirtual {
                 switch (Mode)
                 {
                     case GameMode.GAME:
-                        text += "GAME IN PROGRESS";
+                        text += "\nGAME IN PROGRESS";
                         text += Player.Info;
-                        text += ">>>Press wasd for movement\n";
-                        text += ">>>Press q to quit\n";
+                        text += "\n>>>Press wasd for movement\n";
+                        text += "\n>>>Press q to quit\n";
                         return text;
                     case GameMode.MENU:
-                        text += "MAIN MENU";
-                        text += ">>>Press z to play\n";
-                        text += ">>>Press q to quit\n";
+                        text += "\nMAIN MENU";
+                        text += "\n>>>Press z to play\n";
+                        text += "\n>>>Press q to quit\n";
                         return text;
                 }
-                return "Error\n";
+                return "\nError";
             }
         }
         public string DisplayString
@@ -46,9 +46,9 @@ namespace SEVirtual {
             {
                 //assume console so using \n 
                 string text = "";
-                text += "----------\n";
+                text += "\n----------";
                 text += ModeInfo;
-                text += "----------\n";
+                text += "\n----------";
                 return text;
             }
         }
@@ -105,7 +105,12 @@ namespace SEVirtual {
             TileVBuilder tbuilder= new TileVBuilder();
             _tiles = tbuilder.LoadTileVsFromFile();
             Random rand = new Random();
-            Player.Tile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
+            TileV ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
+            while (ftile.Blocked)
+            { 
+                ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
+            }
+            Player.Tile = ftile;
         }
     }
 }
