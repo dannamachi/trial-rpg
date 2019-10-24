@@ -13,8 +13,10 @@ namespace SEVirtual {
             foreach (Request req in requests) {
                 _reqs.Add(req);
             }
+            Description = "A quest, who knows?";
         }
         //properties
+        public string Description { get; set; }
         //methods
         public bool IsFulfilledBy(Player p) {
             foreach (Request req in _reqs) {

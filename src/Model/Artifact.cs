@@ -8,11 +8,13 @@ namespace SEVirtual {
         //constructors
         public Artifact(string name) {
             Name = name;
+            Description = "An item called " + Name;
         }
         //properties
+        public string Description { get; set; }
         //methods
         public override bool IsCalled(string name) {
-            return name.ToLower() == _name.ToLower();
+            return name.ToLower() == Name.ToLower();
         }
     }
 }
