@@ -1,0 +1,27 @@
+5
+5
+x
+x
+x
+x
+x
+x
+x
+a,1,"hnotes","Notes from Hell"
+o
+x
+x
+o
+a,1,"fquill","Quill of Fate"
+x
+x
+x
+o
+x
+o
+o
+f,1,"Hell1"
+o
+x
+x
+q,1,"Hell1","Tales straight from Hell, yours truly~",2,"hnotes",1,"fquill",1
