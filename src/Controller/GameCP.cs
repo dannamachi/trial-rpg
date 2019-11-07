@@ -5,6 +5,7 @@ using System.Text;
 namespace SEVirtual {
     public class GameCP : ViewLens {
         //fields
+        private GameMode _mode;
         private PlayerCP _playCP;
         //constructors
         public GameCP() {
@@ -14,8 +15,40 @@ namespace SEVirtual {
             IsQuit = false;
             IsWin = false;
             _playCP = CreatePlayCP();
+            Mode = GameMode.MENU;
         }
         //properties
+        private string ModeInfo
+        {
+            get
+            {
+                string text = "";
+                switch (Mode)
+                {
+                    case GameMode.GAME:
+                        text += "\nGAME IN PROGRESS";
+                        text += _playCP.Player.Info;
+                        text += "\n>>>Press wasd for movement\n";
+                        text += "\n>>>Press f for action\n";
+                        text += "\n>>>Press q to quit\n";
+                        return text;
+                    case GameMode.MENU:
+                        text += "\nMAIN MENU";
+                        text += "\n>>>Press z to play\n";
+                        text += "\n>>>Press q to quit\n";
+                        return text;
+                }
+                return "\nError";
+            }
+        }
+        public GameMode Mode {
+            get => _mode;
+            set
+            {
+                _mode = value;
+                _playCP.Mode = value;
+            }
+        }
         public string DisplayString
         {
             get
@@ -23,7 +56,13 @@ namespace SEVirtual {
                 string text = "";
                 text += "\n==========";
                 text += "\n==========";
-                text += _playCP.DisplayString;
+                if (Mode == GameMode.GAME)
+                {
+                    text += "\n----------";
+                    text += "\n" + _playCP.DisplayMap;
+                    text += "\n----------";
+                }
+                text += ModeInfo;
                 text += "\n==========";
                 text += "\n==========";
                 return text;
@@ -49,7 +88,7 @@ namespace SEVirtual {
         }
         public void PlayTheGame() {
             IsPlay = true;
-            _playCP.Mode = GameMode.GAME;
+            Mode = GameMode.GAME;
         }
     }
 }

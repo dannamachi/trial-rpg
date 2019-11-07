@@ -8,7 +8,7 @@ namespace SEVirtual {
     GAME
     }
 
-    public class PlayerCP : ViewLens {
+    public class PlayerCP {
         //fields
         private List<TileV> _tiles;
         private List<PlayerAction> _pacts;
@@ -19,6 +19,7 @@ namespace SEVirtual {
             Player = new Player();
         }
         //properties
+        public GameMode Mode { get; set; }
         public int MaxCol { get => _build.MaxCol; }
         public int MaxRow { get => _build.MaxRow; }
         public string DisplayMap
@@ -50,46 +51,6 @@ namespace SEVirtual {
                 return text;
             }
         }
-        private string ModeInfo
-        {
-            get
-            {
-                string text = "";
-                switch (Mode)
-                {
-                    case GameMode.GAME:
-                        text += "\nGAME IN PROGRESS";
-                        text += Player.Info;
-                        text += "\n>>>Press wasd for movement\n";
-                        text += "\n>>>Press f for action\n";
-                        text += "\n>>>Press q to quit\n";
-                        return text;
-                    case GameMode.MENU:
-                        text += "\nMAIN MENU";
-                        text += "\n>>>Press z to play\n";
-                        text += "\n>>>Press q to quit\n";
-                        return text;
-                }
-                return "\nError";
-            }
-        }
-        public string DisplayString
-        {
-            get
-            {
-                //assume console so using \n 
-                string text = "";
-                if (Mode == GameMode.GAME)
-                {
-                    text += "\n----------";
-                    text += "\n" + DisplayMap;
-                    text += "\n----------";
-                }
-                text += ModeInfo;
-                text += "\n----------";
-                return text;
-            }
-        }
         public PlayerAction PlayerAction
         {
             get
@@ -103,7 +64,6 @@ namespace SEVirtual {
             }
         }
         public Player Player { get; set; }
-        public GameMode Mode { get; set; }
         //methods
         public TileV FindTileAt(int x, int y)
         {
@@ -144,7 +104,6 @@ namespace SEVirtual {
                 _pacts.Add(pact);
             }
             //initialize player and tiles n such here
-            Mode = GameMode.MENU;
             TileVBuilder tbuilder= new TileVBuilder();
             _tiles = tbuilder.LoadTileVsFromFile();
             Random rand = new Random();
