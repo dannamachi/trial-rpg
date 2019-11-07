@@ -7,28 +7,35 @@ namespace SEVirtual {
     public delegate void ActionMove(TDir dir);
     public class RRLine {
         //fields
-        private ActionVoid _voidFunc;
+        private List<ActionVoid> _voidFuncs;
         private ActionMove _moveFunc;
 
         //constructors
-        public RRLine(ActionVoid voidfunc) {
-            _voidFunc = voidfunc;
+        public RRLine()
+        {
+            _voidFuncs = new List<ActionVoid>();
             _moveFunc = null;
             Activated = false;
         }
-        public RRLine(ActionMove movefunc)
+        public RRLine(ActionVoid voidfunc) : this() 
+        {
+            _voidFuncs.Add(voidfunc);
+        }
+        public RRLine(ActionMove movefunc) : this()
         {
             _moveFunc = movefunc;
-            _voidFunc = null;
-            Activated = false;
         }
         //properties
         public PlayerInput PlayerInput { get; set; }
         public bool Activated { get;set; }
         //methods
+        public void Add(ActionVoid av)
+        {
+            _voidFuncs.Add(av);
+        }
         public bool IsOfType(string type)
         {
-            if (type == "V" && _voidFunc != null) { return true; }
+            if (type == "V" && _voidFuncs.Count != 0) { return true; }
             if (type == "M" && _moveFunc != null) { return true; }
             return false;
         }
@@ -37,7 +44,10 @@ namespace SEVirtual {
             return inp.EqualsTo(PlayerInput);
         }
         public void Run() {
-            _voidFunc();
+            foreach (ActionVoid av in _voidFuncs)
+            {
+                av();
+            }
         }
         public void Run(TDir dir) {
             _moveFunc(dir);

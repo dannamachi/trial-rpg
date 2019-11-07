@@ -25,6 +25,7 @@ namespace SEVirtual {
         //properties
         public int X { get => _x; }
         public int Y { get => _y; }
+        public Storybook Storybook { get; set; }
         public Trigger Trigger { get;set; }
         public bool Blocked { get;set; }
         public string Info

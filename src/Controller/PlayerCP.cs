@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SEVirtual {
-    public enum GameMode {
-    MENU,
-    GAME
-    }
-
     public class PlayerCP {
         //fields
         private List<TileV> _tiles;
@@ -65,6 +60,20 @@ namespace SEVirtual {
         }
         public Player Player { get; set; }
         //methods
+        public string GetDialogue()
+        {
+            if (Player.Tile != null)
+            {
+                if (Player.Tile.Storybook != null)
+                {
+                    if (!Player.Tile.Storybook.IsRead)
+                    {
+                        return Player.Tile.Storybook.DisplayPage;
+                    }
+                }
+            }
+            return null;
+        }
         public TileV FindTileAt(int x, int y)
         {
             if (x > MaxCol || x < 0 || y > MaxRow || y < 0) { return null; }

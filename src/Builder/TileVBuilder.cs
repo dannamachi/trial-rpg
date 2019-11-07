@@ -135,6 +135,51 @@ namespace SEVirtual
         }
         private void LoadTileDataV()
         {
+            LoadTileDataV_Trig();
+            LoadTileDataV_Story();
+        }
+        private void LoadTileDataV_Story()
+        {
+            StreamReader reader = new StreamReader("storybooks.txt");
+            if (reader != null)
+            {
+                string line = reader.ReadLine();
+                int pageno, x, y;
+                string storytitle;
+                string[] array;
+                Storybook book;
+                Storypage page;
+                List<Storypage> pages;
+                TileV tile;
+                while (line != null)
+                {
+                    pageno = Convert.ToInt32(line);
+                    array = reader.ReadLine().Split('|');
+                    x = Convert.ToInt32(array[0]);
+                    y = Convert.ToInt32(array[1]);
+                    storytitle = reader.ReadLine();
+                    pages = new List<Storypage>();
+                    for (int i = 0; i < pageno; i++)
+                    {
+                        array = reader.ReadLine().Split("|");
+                        page = new Storypage(array[0], array[1]);
+                        pages.Add(page);
+                    }
+                    book = new Storybook(storytitle, pages);
+                    tile = FindTileAt(_tileVs, x, y);
+                    if (tile != null)
+                    {
+                        if (!tile.Blocked)
+                        {
+                            tile.Storybook = book;
+                        }
+                    }
+                    line = reader.ReadLine();
+                }
+            }
+        }
+        private void LoadTileDataV_Trig()
+        {
             _tileVs = new List<TileV>();
             StreamReader reader = new StreamReader("tileDataV.txt");
             if (reader != null)
@@ -150,7 +195,7 @@ namespace SEVirtual
                     for (int x = 0; x < col; x++)
                     {
                         line = reader.ReadLine();
-                        lineparts = line.Split(',').ToList();
+                        lineparts = line.Split('|').ToList();
                         tiletype = lineparts[0];
                         lineparts.RemoveAt(0);
                         switch (tiletype)

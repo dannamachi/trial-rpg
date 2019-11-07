@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SEVirtual {
-    public enum ActionNode {
-        MENU_QUIT,
-        MENU_PLAY,
-        GAME_MOVE,
-        GAME_FLIP,
-        GAME_QUIT
-    }
     public class RRBuilder {
         //fields
         private GameCP _game;
@@ -25,9 +18,21 @@ namespace SEVirtual {
             List<PlayerAction> pacts = new List<PlayerAction>();
             pacts.Add(BuildPActMENU());
             pacts.Add(BuildPActGAME());
+            pacts.Add(BuildPActDIAL());
             return pacts;
         }
 
+        private PlayerAction BuildPActDIAL()
+        {
+            List<RRLine> diallist = new List<RRLine>();
+
+            RRLine readline = new RRLine(new ActionVoid(_game.ContinueDialogue));
+            readline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
+
+            diallist.Add(readline);
+
+            return new PlayerAction(diallist, GameMode.DIAL);
+        }
         private PlayerAction BuildPActMENU() {
             List<RRLine> menulist = new List<RRLine>();
 
@@ -58,6 +63,7 @@ namespace SEVirtual {
             movelineA.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
             //flipline
             RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
+            flipline.Add(new ActionVoid(_game.StartDialogue));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 
             gamelist.Add(quitline);

@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SEVirtual {
+    public enum GameMode
+    {
+        MENU,
+        GAME,
+        DIAL
+    }
     public class GameCP : ViewLens {
         //fields
         private GameMode _mode;
@@ -16,8 +22,10 @@ namespace SEVirtual {
             IsWin = false;
             _playCP = CreatePlayCP();
             Mode = GameMode.MENU;
+            Dialogue = "";
         }
         //properties
+        private string Dialogue { get; set; }
         private string ModeInfo
         {
             get
@@ -36,6 +44,9 @@ namespace SEVirtual {
                         text += "\nMAIN MENU";
                         text += "\n>>>Press z to play\n";
                         text += "\n>>>Press q to quit\n";
+                        return text;
+                    case GameMode.DIAL:
+                        text += "\n>>>Press z to continue reading\n";
                         return text;
                 }
                 return "\nError";
@@ -62,6 +73,10 @@ namespace SEVirtual {
                     text += "\n" + _playCP.DisplayMap;
                     text += "\n----------";
                 }
+                else if (Mode == GameMode.DIAL)
+                {
+                    text += Dialogue;
+                }
                 text += ModeInfo;
                 text += "\n==========";
                 text += "\n==========";
@@ -72,6 +87,25 @@ namespace SEVirtual {
         public bool IsQuit { get;set; }
         public bool IsWin { get;set; }
         //methods
+        public void StartDialogue()
+        {
+            Dialogue = _playCP.GetDialogue();
+            if (Dialogue != null)
+                ToggleDialogue();
+        }
+        public void ContinueDialogue()
+        {
+            Dialogue = _playCP.GetDialogue();
+            if (Dialogue == null)
+            {
+                ToggleDialogue();
+            }
+        }
+        public void ToggleDialogue()
+        {
+            if (Mode != GameMode.DIAL) { Mode = GameMode.DIAL; }
+            else { Mode = GameMode.GAME; }
+        }
         public void PerformAction(PlayerInput input)
         {
             _playCP.PerformAction(input);
