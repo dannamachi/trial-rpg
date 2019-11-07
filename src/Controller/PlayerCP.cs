@@ -12,12 +12,44 @@ namespace SEVirtual {
         //fields
         private List<TileV> _tiles;
         private List<PlayerAction> _pacts;
+        private TileVBuilder _build;
         //constructors
         public PlayerCP() 
         {
             Player = new Player();
         }
         //properties
+        public int MaxCol { get => _build.MaxCol; }
+        public int MaxRow { get => _build.MaxRow; }
+        public string DisplayMap
+        {
+            get
+            {
+                string text = "\n";
+                for (int i = 0; i < MaxRow; i++)
+                {
+                    for (int j = 0; j < MaxCol; j++)
+                    {
+                        TileV tile = FindTileAt(j, i);
+                        if (tile == null) { text += "  "; }
+                        else if (tile.Blocked)
+                        {
+                            text += "o ";
+                        }
+                        else if (Player.Tile.IsAt(j,i))
+                        {
+                            text += "x ";
+                        }
+                        else 
+                        {
+                            text += "w ";
+                        }
+                    }
+                    text += "\n";
+                }
+                return text;
+            }
+        }
         private string ModeInfo
         {
             get
@@ -29,6 +61,7 @@ namespace SEVirtual {
                         text += "\nGAME IN PROGRESS";
                         text += Player.Info;
                         text += "\n>>>Press wasd for movement\n";
+                        text += "\n>>>Press f for action\n";
                         text += "\n>>>Press q to quit\n";
                         return text;
                     case GameMode.MENU:
@@ -46,7 +79,12 @@ namespace SEVirtual {
             {
                 //assume console so using \n 
                 string text = "";
-                text += "\n----------";
+                if (Mode == GameMode.GAME)
+                {
+                    text += "\n----------";
+                    text += "\n" + DisplayMap;
+                    text += "\n----------";
+                }
                 text += ModeInfo;
                 text += "\n----------";
                 return text;
@@ -67,6 +105,11 @@ namespace SEVirtual {
         public Player Player { get; set; }
         public GameMode Mode { get; set; }
         //methods
+        public TileV FindTileAt(int x, int y)
+        {
+            if (x > MaxCol || x < 0 || y > MaxRow || y < 0) { return null; }
+            return _build.FindTileAt(_tiles, x, y);
+        }
         private void PerformAction_Void(RRLine line)
         {
             line.Run();
@@ -111,6 +154,7 @@ namespace SEVirtual {
                 ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
             }
             Player.Tile = ftile;
+            _build = tbuilder;
         }
     }
 }
