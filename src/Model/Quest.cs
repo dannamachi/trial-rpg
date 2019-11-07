@@ -18,6 +18,15 @@ namespace SEVirtual {
         //properties
         public string Description { get; set; }
         //methods
+        public string Info()
+        {
+            string text = "\n" + Description;
+            foreach (Request req in _reqs)
+            {
+                text += "\n" + req.Info();
+            }
+            return text;
+        }
         public bool IsFulfilledBy(Player p) {
             foreach (Request req in _reqs) {
                 if (!req.IsFulfilledBy(p)) {

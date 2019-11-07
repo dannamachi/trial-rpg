@@ -16,6 +16,19 @@ namespace SEVirtual {
             _isf = false;
         }
         //properties
+        public override string Info
+        {
+            get
+            {
+                string text = "";
+                text += "\nQuest Trigger:";
+                foreach (Quest q in _quests)
+                {
+                    text += "\n\t" + q.Info();
+                }
+                return text;
+            }
+        }
         //methods
         protected override void PerformFlip(Player p) {
             if (!_isf)

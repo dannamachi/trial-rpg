@@ -14,6 +14,19 @@ namespace SEVirtual {
             }
         }
         //properties
+        public override string Info
+        {
+            get
+            {
+                string text = "";
+                text += "\nFinish Trigger:";
+                foreach (string qname in _questNames)
+                {
+                    text += "\n\t" + qname;
+                }
+                return text;
+            }
+        }
         //methods
         protected override void PerformFlip(Player p) {
             foreach (string questName in _questNames) {

@@ -14,6 +14,10 @@ namespace SEVirtual {
         }
         //properties
         //methods
+        public string Info()
+        {
+            return _objName + " - " + _reqCode;
+        }
         ///method to determine if request is fulfilled
         ///0-1: artifact no/yes
         ///2-3: quest no/yes

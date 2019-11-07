@@ -16,6 +16,19 @@ namespace SEVirtual {
             _isf = false;
         }
         //properties
+        public override string Info
+        {
+            get
+            {
+                string text = "";
+                text += "\nArtifact Trigger:";
+                foreach (Artifact art in _arts)
+                {
+                    text += "\n\t" + art.Description;
+                }
+                return text;
+            }
+        }
         //methods
         protected override void PerformFlip(Player p) {
             if (!_isf)

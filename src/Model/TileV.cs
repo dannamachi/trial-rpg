@@ -27,6 +27,18 @@ namespace SEVirtual {
         public int Y { get => _y; }
         public Trigger Trigger { get;set; }
         public bool Blocked { get;set; }
+        public string Info
+        {
+            get
+            {
+                string text = "";
+                text += "\nTile at " + X + " - " + Y;
+                text += "\nTile has trigger:";
+                if (Trigger != null) { text += Trigger.Info; }
+                text += "\nTile is blocked:" + Blocked;
+                return text;
+            }
+        }
         //methods
         public bool IsAt(int x, int y)
         {
