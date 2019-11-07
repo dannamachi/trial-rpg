@@ -46,12 +46,15 @@ namespace SEVirtual
                 List<Request> reqs = new List<Request>();
                 reqno = Convert.ToInt32(line[z + 2]);
                 int i = z + 3;
-                while (i < reqno)
+                int count = 0;
+                while (count < reqno)
                 {
                     objname = line[i];
                     objcode = Convert.ToInt32(line[i + 1]);
-                    reqs.Add(new Request(objname, objcode));
+                    Request req = new Request(objname, objcode);
+                    reqs.Add(req);
                     i += 2;
+                    count += 1;
                 }
                 Quest q = new Quest(qname, reqs);
                 q.Description = qdesc;
