@@ -37,7 +37,7 @@ namespace SEVirtual {
                         text += "\nGAME IN PROGRESS";
                         text += _playCP.Player.Info;
                         text += "\n>>>Press wasd for movement\n";
-                        text += "\n>>>Press f for action\n";
+                        text += "\n>>>Press f to find\n";
                         text += "\n>>>Press q to quit\n";
                         return text;
                     case GameMode.MENU:
@@ -115,6 +115,7 @@ namespace SEVirtual {
             PlayerCP playCP = new PlayerCP();
             RRBuilder builder = new RRBuilder(this,playCP.Player);
             playCP.Initialize(builder.BuildPActs());
+            playCP.SetInput(builder);
             return playCP;
         }
         public void QuitTheGame() {

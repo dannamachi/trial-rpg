@@ -11,6 +11,8 @@ namespace SEVirtual {
             _arts = new List<VirtualObject>();
         }
         //properties
+        public VirtualObject GetLast { get => _arts[Count - 1]; }
+        public int Count { get => _arts.Count; }
         public List<string> NameList
         {
             get 
@@ -24,6 +26,26 @@ namespace SEVirtual {
             }
         }
         //methods
+        public VirtualObject Find(int num)
+        {
+            if (num >= 0 && num < Count)
+            {
+                return _arts[num];
+            }
+            return null;
+        }
+        public void CutDownTo(int num)
+        {
+            if (num >= 0)
+            {
+                List<VirtualObject> newlist = new List<VirtualObject>();
+                for (int i = 0; i < num; i++)
+                {
+                    newlist.Add(_arts[i]);
+                }
+                _arts = newlist;
+            }
+        }
         ///add an artifact to inventory
         public void Add(VirtualObject art) {
             if (!(_arts.Contains(art)))

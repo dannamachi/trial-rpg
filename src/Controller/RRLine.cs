@@ -5,17 +5,24 @@ using System.Text;
 namespace SEVirtual {
     public delegate void ActionVoid();
     public delegate void ActionMove(TDir dir);
+    public delegate void ActionUse(string name);
     public class RRLine {
         //fields
         private List<ActionVoid> _voidFuncs;
         private ActionMove _moveFunc;
+        private ActionUse _useFunc;
 
         //constructors
-        public RRLine()
+        private RRLine()
         {
             _voidFuncs = new List<ActionVoid>();
             _moveFunc = null;
+            _useFunc = null;
             Activated = false;
+        }
+        public RRLine(ActionUse usefunc) : this()
+        {
+            _useFunc = usefunc;
         }
         public RRLine(ActionVoid voidfunc) : this() 
         {
@@ -42,6 +49,10 @@ namespace SEVirtual {
         public bool IsFlagged(PlayerInput inp)
         {
             return inp.EqualsTo(PlayerInput);
+        }
+        public void Run(string name)
+        {
+            _useFunc(name);
         }
         public void Run() {
             foreach (ActionVoid av in _voidFuncs)

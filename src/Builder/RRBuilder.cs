@@ -14,6 +14,28 @@ namespace SEVirtual {
         }
         //properties
         //methods
+        public List<TileV> SetInput(List<TileV> tiles)
+        {
+            foreach (TileV tile in tiles)
+            {
+                if (tile.Object != null)
+                {
+                    if (tile.Object is ActionObject)
+                    {
+                        (tile.Object as ActionObject).ActionLine.PlayerInput = new PlayerInput(new ConsoleKeyInfo('c', ConsoleKey.C, false, false, false));
+                    }
+                    else if (tile.Object is GameObject)
+                    {
+                        RRLine hline = new RRLine(new ActionVoid(_player.HoldObject));
+                        hline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('e', ConsoleKey.E, false, false, false));
+                        ConLine cline = new ConLine(new ActionVoid(_player.PlaceObject), new ConToken(tile.Object.Name + "|place|000"));
+                        cline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('r', ConsoleKey.R, false, false, false));
+                        tile.Object.SetMovePlace(hline, cline);
+                    }
+                }
+            }
+            return tiles;
+        }
         public List<PlayerAction> BuildPActs() {
             List<PlayerAction> pacts = new List<PlayerAction>();
             pacts.Add(BuildPActMENU());
@@ -21,7 +43,6 @@ namespace SEVirtual {
             pacts.Add(BuildPActDIAL());
             return pacts;
         }
-
         private PlayerAction BuildPActDIAL()
         {
             List<RRLine> diallist = new List<RRLine>();
@@ -64,6 +85,7 @@ namespace SEVirtual {
             //flipline
             RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
             flipline.Add(new ActionVoid(_game.StartDialogue));
+            flipline.Add(new ActionVoid(_player.AddStory));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 
             gamelist.Add(quitline);

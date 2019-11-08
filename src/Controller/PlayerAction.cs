@@ -17,7 +17,6 @@ namespace SEVirtual {
         }
         //properties
         public GameMode Mode { get => _mode; }
-        public List<RRLine> ValidLines { get => _actionLines; }
         public List<PlayerInput> ValidInputs
         {
             get
@@ -32,6 +31,24 @@ namespace SEVirtual {
             }
         }
         //methods
+        public List<RRLine> GetValidLines(Player p)
+        {
+            List<RRLine> lines = new List<RRLine>();
+            foreach (RRLine line in _actionLines)
+            {
+                lines.Add(line);
+            }
+            if (p.Tile.Object is ActionObject)
+            {
+                lines.Add(p.Tile.Object.ActionLine);
+            }
+            else if (p.Tile.Object is GameObject && p.Holding == null)
+            { 
+                lines.Add(p.Tile.Object.ActionLine); 
+            }
+            if (p.Holding != null) { lines.Add(p.Holding.ActionLine); }
+            return lines;
+        }
         public void ActivateLines() {
             foreach (RRLine line in _actionLines) {
             line.Activated = true;

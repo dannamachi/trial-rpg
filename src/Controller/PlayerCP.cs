@@ -60,6 +60,40 @@ namespace SEVirtual {
         }
         public Player Player { get; set; }
         //methods
+        public void SetInput(RRBuilder rbuilder)
+        {
+            rbuilder.SetInput(_tiles);
+        }
+        private int ConsoleKeyToInt(ConsoleKeyInfo cki)
+        {
+            if (char.IsDigit(cki.KeyChar))
+            {
+                return int.Parse(cki.KeyChar.ToString());
+            }
+            return -1;
+        }
+        private bool ValidIndex(ConsoleKeyInfo cki)
+        {
+            int index = ConsoleKeyToInt(cki);
+            return index >= 0 && index < Player.ArtifactCount;
+        }
+        private PlayerInput GetInputForUseAction()
+        {
+            Console.Write(Player.ArtifactList);
+            Console.Write("\n>>>>>Press index of artifact to use: ");
+            ConsoleKeyInfo cki = Console.ReadKey();
+            PlayerInput input;
+            if (ValidIndex(cki))
+            {
+                input = new PlayerInput(cki);
+            }
+            else
+            {
+                Console.Write("\n>>>>>Invalid input.");
+                input = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
+            }
+            return input;
+        }
         public string GetDialogue()
         {
             if (Player.Tile != null)
@@ -90,16 +124,39 @@ namespace SEVirtual {
             else if (line.PlayerInput.CKI.Key == ConsoleKey.S) { line.Run(TDir.BOTTOM); }
             else if (line.PlayerInput.CKI.Key == ConsoleKey.A) { line.Run(TDir.LEFT); }
         }
+        private void PerformAction_Con(ConLine line)
+        {
+            line.IsAttemptedBy(Player);
+            if (line.ActionType == "place")
+            {
+                line.Run();
+                Player.UpdateToken();
+            }
+            else
+            {
+                PlayerInput input = GetInputForUseAction();
+                if (!input.EqualsTo(new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false)))) 
+                {
+                    line.Run(Player.Find(ConsoleKeyToInt(input.CKI)).Name);
+                    Player.UpdateToken();
+                    Player.RemoveUsed();
+                }
+            }
+        }
         public void PerformAction(PlayerInput input)
         {
             PlayerAction pact = PlayerAction;
             if (pact != null)
             {
-                foreach (RRLine posline in pact.ValidLines)
+                foreach (RRLine posline in pact.GetValidLines(Player))
                 {
                     if (posline.IsFlagged(input))
                     {
-                        if (posline.IsOfType("M")) { PerformAction_Move(posline, input); }
+                        if (posline is ConLine)
+                        {
+                            PerformAction_Con(posline as ConLine);
+                        }
+                        else if (posline.IsOfType("M")) { PerformAction_Move(posline, input); }
                         else if (posline.IsOfType("V")) { PerformAction_Void(posline); }
                     }
                 }
@@ -123,6 +180,9 @@ namespace SEVirtual {
             }
             Player.Tile = ftile;
             _build = tbuilder;
+            //initialize objects
+            ObjectBuilder obuilder = new ObjectBuilder(Player);
+            _tiles = obuilder.AddObjectFromFile(_tiles);
         }
     }
 }

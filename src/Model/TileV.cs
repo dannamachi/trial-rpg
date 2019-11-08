@@ -21,10 +21,28 @@ namespace SEVirtual {
             _x = x;
             _y = y;
             _tileDict = new Dictionary<TDir, TileV>();
+            Object = null;
+            ID = x.ToString() + "," + y.ToString(); //EDIT
         }
         //properties
+        public List<TileV> MoveableTiles 
+        { 
+            get
+            {
+                List<TileV> tiles = new List<TileV>();
+                foreach (TDir dir in _tileDict.Keys)
+                {
+                    if (CanMoveTo(dir))
+                        tiles.Add(_tileDict[dir]);
+                }
+                return tiles;
+            } 
+        }
+        public string ID { get; set; } //EDIT
         public int X { get => _x; }
         public int Y { get => _y; }
+        public ActionObject LinkedTo { get; set; }
+        public GameObject Object { get; set; }
         public Storybook Storybook { get; set; }
         public Trigger Trigger { get;set; }
         public bool Blocked { get;set; }
@@ -41,6 +59,14 @@ namespace SEVirtual {
             }
         }
         //methods
+        public bool CanBeFlippedBy(Player p)
+        {
+            if (LinkedTo != null)
+            {
+                return LinkedTo.IsSolvedBy(p);
+            }
+            return true;
+        }
         public bool IsAt(int x, int y)
         {
             return _x == x && _y == y;
@@ -58,7 +84,11 @@ namespace SEVirtual {
             return _tileDict[dir];
         }
         public bool CanMoveTo(TDir dir) {
-            return _tileDict.ContainsKey(dir);
+            if (_tileDict.ContainsKey(dir))
+            {
+                return !_tileDict[dir].Blocked;
+            }
+            return false;
         }
     }
 }
