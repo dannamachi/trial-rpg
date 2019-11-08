@@ -7,8 +7,11 @@ namespace SEVirtual {
         //fields
         //constructors
         //properties
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         //methods
-        public abstract bool IsCalled(string name);
+        public virtual bool IsCalled(string name)
+        {
+            return name.ToLower() == Name.ToLower();
+        }
     }
 }

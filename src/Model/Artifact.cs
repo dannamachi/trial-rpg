@@ -13,8 +13,5 @@ namespace SEVirtual {
         //properties
         public string Description { get; set; }
         //methods
-        public override bool IsCalled(string name) {
-            return name.ToLower() == Name.ToLower();
-        }
     }
 }
