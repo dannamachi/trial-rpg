@@ -1,27 +1,27 @@
 5
 5
 x
+a|1|magicjewel|Magic Jewel
 x
 x
 x
 x
-x
-x
-a|1|hnotes|Notes from Hell
-o
-x
-x
-o
-a|1|fquill|Quill of Fate
-x
-x
+a|1|key|Key of Some Chest
 x
 o
 x
+x
+o
+a|1|teleportcharm|Blink and you are out
+x
+x
+q|1|findwayout|Find your way out, fool|2|teleportcharm|1|magicjewel|1
+o
+x
 o
 o
-f|1|Hell1
+f|1|findwayout
 o
 x
 x
-q|1|Hell1|Tales straight from Hell yours truly~|2|hnotes|1|fquill|1
+x
