@@ -35,8 +35,5 @@ namespace SEVirtual {
             }
             return true;
         }
-        public override bool IsCalled(string name) {
-            return name.ToLower() == name.ToLower();
-        }
     }
 }
