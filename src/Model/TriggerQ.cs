@@ -37,7 +37,7 @@ namespace SEVirtual {
                 {
                     p.Add(q);
                 }
-                _isf = true;
+                //_isf = true;
             }
         }
     }
