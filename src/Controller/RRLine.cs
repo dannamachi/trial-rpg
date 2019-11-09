@@ -11,7 +11,6 @@ namespace SEVirtual {
         private List<ActionVoid> _voidFuncs;
         private ActionMove _moveFunc;
         private ActionUse _useFunc;
-
         //constructors
         private RRLine()
         {

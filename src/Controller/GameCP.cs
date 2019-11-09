@@ -113,6 +113,23 @@ namespace SEVirtual {
         public bool IsQuit { get;set; }
         public bool IsWin { get;set; }
         //methods
+        public void CheckWin()
+        {
+            bool result = true;
+            foreach (string name in _playCP.GetQuestNames())
+            {
+                if (!_playCP.Player.Has(name, "CQ"))
+                {
+                    result = false;
+                    break;
+                }
+            }
+            if (result)
+            {
+                Viewer.Display("\nYou won the game!");
+            }
+            IsWin = result;
+        }
         public void RunDialogue()
         {
             StartDialogue();
@@ -184,9 +201,13 @@ namespace SEVirtual {
                 IsPlay = false;
                 IsQuit = false;
                 IsWin = false;
+                _opname = new VirtualObject();
                 _playCP = CreatePlayCP();
+                _playCP.Player.OpName = _opname;
+                _playCP.Player.SwitchAlert = new ActionVoid(SwitchAlert);
                 Mode = GameMode.MENU;
                 Dialogue = "";
+                Alert = "";
                 _info = "\nGame has been reset.";
             }
             else { OpName = "RESET"; SwitchAlert(); }

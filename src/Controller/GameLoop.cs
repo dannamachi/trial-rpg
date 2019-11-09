@@ -24,6 +24,12 @@ namespace SEVirtual {
             ConsoleKeyInfo cki = Console.ReadKey();
             PlayerInput input = new PlayerInput(cki);
             _gameCP.PerformAction(input);
+            _gameCP.CheckWin();
+            if (_gameCP.IsWin)
+            {
+                _gameCP.Reset();
+                _gameCP.Running = new RRLine(new ActionVoid(_gameCP.Reset));
+            }
         }
         private void Display() {
             Viewer.Display(_gameCP);

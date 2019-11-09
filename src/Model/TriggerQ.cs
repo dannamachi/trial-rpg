@@ -30,6 +30,10 @@ namespace SEVirtual {
             }
         }
         //methods
+        public List<Quest> GetQuests()
+        {
+            return _quests;
+        }
         protected override void PerformFlip(Player p) {
             if (!_isf)
             {

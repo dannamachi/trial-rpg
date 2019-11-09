@@ -61,6 +61,23 @@ namespace SEVirtual {
         }
         public Player Player { get; set; }
         //methods
+        public List<string> GetQuestNames()
+        {
+            List<string> names = new List<string>();
+            foreach (TileV tile in _tiles)
+            {
+                if (tile.Trigger == null)
+                    continue;
+                if (tile.Trigger is TriggerQ)
+                {
+                    foreach (Quest q in (tile.Trigger as TriggerQ).GetQuests())
+                    {
+                        names.Add(q.Name);
+                    }
+                }
+            }
+            return names;
+        }
         public void SetInput(RRBuilder rbuilder)
         {
             rbuilder.SetInput(_tiles);
