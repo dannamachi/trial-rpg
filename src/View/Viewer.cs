@@ -4,14 +4,17 @@ using System.Text;
 
 namespace SEVirtual
 {
-    public class Viewer
+    public static class Viewer
     {
         //fields
         //constructors
-        public Viewer() { }
         //properties
         //methods
-        public void Display(ViewLens lens)
+        public static void Display(string ash)
+        {
+            Console.Write(ash);
+        }
+        public static void Display(ViewLens lens)
         {
             Console.Write(lens.DisplayString);
         }
