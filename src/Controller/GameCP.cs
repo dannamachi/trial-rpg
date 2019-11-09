@@ -7,12 +7,16 @@ namespace SEVirtual {
     {
         MENU,
         GAME,
-        DIAL
+        DIAL,
+        ALERT
     }
     public class GameCP : ViewLens {
         //fields
+        private GameMode _pmode;
         private GameMode _mode;
         private PlayerCP _playCP;
+        private string _info;
+        private VirtualObject _opname;
         //constructors
         public GameCP() {
             //for game to keep track of quest finished -- a better way to do this?
@@ -20,11 +24,18 @@ namespace SEVirtual {
             IsPlay = false;
             IsQuit = false;
             IsWin = false;
+            _opname = new VirtualObject();
             _playCP = CreatePlayCP();
+            _playCP.Player.OpName = _opname;
+            _playCP.Player.SwitchAlert = new ActionVoid(SwitchAlert);
             Mode = GameMode.MENU;
             Dialogue = "";
+            Alert = "";
+            _info = "";
         }
         //properties
+        public string OpName { get => _opname.Name; set => _opname.Name = value; }
+        public string Alert { get; set; }
         private string Dialogue { get; set; }
         private string ModeInfo
         {
@@ -38,15 +49,21 @@ namespace SEVirtual {
                         text += _playCP.Player.Info;
                         text += "\n>>>Press wasd for movement\n";
                         text += "\n>>>Press f to find\n";
-                        text += "\n>>>Press q to quit\n";
+                        text += "\n>>>Press q to return to menu\n";
                         return text;
                     case GameMode.MENU:
                         text += "\nMAIN MENU";
                         text += "\n>>>Press z to play\n";
+                        text += "\n>>>Press x to reset\n";
                         text += "\n>>>Press q to quit\n";
                         return text;
                     case GameMode.DIAL:
                         text += "\n>>>Press z to continue reading\n";
+                        return text;
+                    case GameMode.ALERT:
+                        text += "\n>>>>>You are about to: " + OpName;
+                        text += "\n>>>>>Press z to confirm: ";
+                        text += "\n>>>>>Press y to cancel: ";
                         return text;
                 }
                 return "\nError";
@@ -80,6 +97,13 @@ namespace SEVirtual {
                 text += ModeInfo;
                 text += "\n==========";
                 text += "\n==========";
+                if (_info != "")
+                {
+                    text += "\n----------";
+                    text += "\n" + _info;
+                    text += "\n----------";
+                    _info = "";
+                }
                 return text;
             }
         }
@@ -110,6 +134,22 @@ namespace SEVirtual {
         {
             _playCP.PerformAction(input);
         }
+        public void RunOp()
+        {
+            Mode = _pmode;
+            _playCP.Running.Run();
+            OpName = "";
+        }
+        public void CancelOp()
+        {
+            Mode = _pmode;
+            OpName = "";
+        }
+        public void SwitchAlert()
+        {
+            _pmode = Mode;
+            Mode = GameMode.ALERT;
+        }
         public PlayerCP CreatePlayCP() {
             //rrbuilder and such
             PlayerCP playCP = new PlayerCP();
@@ -118,8 +158,28 @@ namespace SEVirtual {
             playCP.SetInput(builder);
             return playCP;
         }
+        public void Reset()
+        {
+            if (OpName == "RESET")
+            {
+                IsPlay = false;
+                IsQuit = false;
+                IsWin = false;
+                _playCP = CreatePlayCP();
+                Mode = GameMode.MENU;
+                Dialogue = "";
+                _info = "\nGame has been reset.";
+            }
+            else { OpName = "RESET"; SwitchAlert(); }
+        }
+        public void SaveQuit()
+        {
+            if (OpName == "SAVEQUIT") { Mode = GameMode.MENU; }
+            else { OpName = "SAVEQUIT"; SwitchAlert(); }
+        }
         public void QuitTheGame() {
-            IsQuit = true;
+            if (OpName == "QUIT") { IsQuit = true; }
+            else { OpName = "QUIT"; SwitchAlert(); }
         }
         public void PlayTheGame() {
             IsPlay = true;

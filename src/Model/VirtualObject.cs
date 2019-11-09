@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SEVirtual {
-    public abstract class VirtualObject {
+    public class VirtualObject {
         //fields
         //constructors
         //properties

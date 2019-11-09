@@ -30,14 +30,14 @@ namespace SEVirtual
 
             //make action line
             line = reader.ReadLine();
+            ConToken utoken = new ConToken(line);
+            ctokens.Add(utoken);
             numreq = Convert.ToInt32(reader.ReadLine());
             for (int j = 0; j < numreq; j++)
             {
                 tokens.Add(new ClearToken(reader.ReadLine()));
             }
-            ConLine cline = new ConLine(new ActionUse(_player.UseArtifact), new ConToken(line), tokens);
-            Console.Write("type: " + cline.ActionType);
-            Console.Write("\nCT: " + cline.ClearTokens);
+            ConLine cline = new ConLine(new ActionUse(_player.UseArtifact), utoken, tokens);
 
             //make move/place lines
             for (int i = 0; i < numcon - 1; i++)

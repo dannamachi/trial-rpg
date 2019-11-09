@@ -41,7 +41,22 @@ namespace SEVirtual {
             pacts.Add(BuildPActMENU());
             pacts.Add(BuildPActGAME());
             pacts.Add(BuildPActDIAL());
+            pacts.Add(BuildPActALERT());
             return pacts;
+        }
+        private PlayerAction BuildPActALERT()
+        {
+            List<RRLine> alertlist = new List<RRLine>();
+
+            RRLine confirmline = new RRLine(new ActionVoid(_game.RunOp));
+            confirmline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
+            RRLine cancelline = new RRLine(new ActionVoid(_game.CancelOp));
+            cancelline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('y', ConsoleKey.Y, false, false, false));
+
+            alertlist.Add(confirmline);
+            alertlist.Add(cancelline);
+
+            return new PlayerAction(alertlist, GameMode.ALERT);
         }
         private PlayerAction BuildPActDIAL()
         {
@@ -61,9 +76,12 @@ namespace SEVirtual {
             quitline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
             RRLine playline = new RRLine(new ActionVoid(_game.PlayTheGame));
             playline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
+            RRLine resetline = new RRLine(new ActionVoid(_game.Reset));
+            resetline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false));
 
             menulist.Add(quitline);
             menulist.Add(playline);
+            menulist.Add(resetline);
 
             return new PlayerAction(menulist, GameMode.MENU);
         }
@@ -71,7 +89,7 @@ namespace SEVirtual {
             List<RRLine> gamelist = new List<RRLine>();
 
             //quitting
-            RRLine quitline = new RRLine(new ActionVoid(_game.QuitTheGame));
+            RRLine quitline = new RRLine(new ActionVoid(_game.SaveQuit));
             quitline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
             //moving
             RRLine movelineW = new RRLine(new ActionMove(_player.Move));
@@ -83,9 +101,9 @@ namespace SEVirtual {
             RRLine movelineA = new RRLine(new ActionMove(_player.Move));
             movelineA.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
             //flipline
-            RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
-            flipline.Add(new ActionVoid(_game.StartDialogue));
+            RRLine flipline = new RRLine(new ActionVoid(_game.StartDialogue));
             flipline.Add(new ActionVoid(_player.AddStory));
+            flipline.Add(new ActionVoid(_player.FlipTile));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 
             gamelist.Add(quitline);

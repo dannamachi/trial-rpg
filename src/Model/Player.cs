@@ -11,6 +11,7 @@ namespace SEVirtual {
         private Inventory _ctokens;
         private Inventory _convos;
         private string _alert;
+        private ActionVoid _switchalert;
         //constructors
         public Player() {
             _quests = new Inventory();
@@ -21,6 +22,8 @@ namespace SEVirtual {
             _alert = "";
         }
         //properties
+        public ActionVoid SwitchAlert { set => _switchalert = value; }
+        public VirtualObject OpName { get; set; }
         public int ArtifactCount { get => _arts.Count; }
         public string ArtifactList
         {
@@ -153,8 +156,9 @@ namespace SEVirtual {
             if (Tile.Trigger != null) {
                 if (Tile.CanBeFlippedBy(this))
                 { 
-                    Tile.Trigger.FlippedBy(this);
                     _alert += "\nYOU FOUND SOMETHING!";
+                    if (OpName.Name == "FLIP") { Tile.Trigger.FlippedBy(this); }
+                    else { OpName.Name = "FLIP"; _switchalert(); }
                 }
                 else
                 {
