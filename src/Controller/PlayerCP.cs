@@ -61,9 +61,95 @@ namespace SEVirtual {
         }
         public Player Player { get; set; }
         //methods
-        public List<string> GetQuestNames()
+        private bool FindQuest(string name)
         {
-            List<string> names = new List<string>();
+            foreach (TileV tile in _tiles)
+            {
+                if (tile.Trigger != null)
+                {
+                    if (tile.Trigger is TriggerQ)
+                    {
+                        foreach (Quest q in (tile.Trigger as TriggerQ).Quests)
+                        {
+                            if (q.IsCalled(name))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        private bool FindArtifact(string name)
+        {
+            foreach (TileV tile in _tiles)
+            {
+                if (tile.Trigger != null)
+                {
+                    if (tile.Trigger is TriggerA)
+                    {
+                        foreach (Artifact art in (tile.Trigger as TriggerA).Artifacts)
+                        {
+                            if (art.IsCalled(name))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public void CheckLose()
+        {
+            bool result = true;
+            //get all requests for an artifact
+            List<Request> reqs = new List<Request>();
+            foreach (Quest q in GetQuests())
+            {
+                foreach (Request req in q.ArtifactRequests)
+                {
+                    reqs.Add(req);
+                }
+            }
+            //find in map if artifact still there
+            foreach (Request req in reqs)
+            {
+                if (!FindArtifact(req.GetNeededArtifact))
+                {
+                    result = false;
+                }
+            }
+            //get all requests that need another quest
+            reqs = new List<Request>();
+            foreach (Quest q in GetQuests())
+            {
+                foreach (Request req in q.QuestRequests)
+                {
+                    reqs.Add(req);
+                }
+            }
+            //find in map if quest still avail
+            foreach (Request req in reqs)
+            {
+                if (!FindQuest(req.GetNeededQuest))
+                {
+                    result = false;
+                }
+            }
+            if (!result)
+            {
+                Viewer.Display("\nYou've lost the game, please proceed to reset.");
+            }
+            else
+            {
+                Viewer.Display("\nYou haven't lost the game yet!");
+            }
+        }
+        public List<Quest> GetQuests()
+        {
+            List<Quest> qs = new List<Quest>();
             foreach (TileV tile in _tiles)
             {
                 if (tile.Trigger == null)
@@ -72,11 +158,11 @@ namespace SEVirtual {
                 {
                     foreach (Quest q in (tile.Trigger as TriggerQ).GetQuests())
                     {
-                        names.Add(q.Name);
+                        qs.Add(q);
                     }
                 }
             }
-            return names;
+            return qs;
         }
         public void SetInput(RRBuilder rbuilder)
         {

@@ -16,6 +16,32 @@ namespace SEVirtual {
             Description = "A quest, who knows?";
         }
         //properties
+        public List<Request> QuestRequests
+        {
+            get
+            {
+                List<Request> reqs = new List<Request>();
+                foreach (Request req in _reqs)
+                {
+                    if (req.GetNeededQuest != null)
+                        reqs.Add(req);
+                }
+                return reqs;
+            }
+        }
+        public List<Request> ArtifactRequests
+        {
+            get
+            {
+                List<Request> reqs = new List<Request>();
+                foreach (Request req in _reqs)
+                {
+                    if (req.GetNeededArtifact != null)
+                        reqs.Add(req);
+                }
+                return reqs;
+            }
+        }
         public string Description { get; set; }
         //methods
         public string Info()

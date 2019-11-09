@@ -16,6 +16,14 @@ namespace SEVirtual {
             _isf = false;
         }
         //properties
+        public List<Artifact> Artifacts
+        {
+            get
+            {
+                if (!_isf) return _arts;
+                else return new List<Artifact>();
+            }
+        }
         public override string Info
         {
             get
@@ -37,7 +45,8 @@ namespace SEVirtual {
                 {
                     p.Add(art);
                 }
-                //_isf = true;
+                if (GameCP.GetDiff == "HARD")
+                    _isf = true;
             }
         }
     }

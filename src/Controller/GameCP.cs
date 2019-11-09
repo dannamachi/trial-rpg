@@ -8,7 +8,8 @@ namespace SEVirtual {
         MENU,
         GAME,
         DIAL,
-        ALERT
+        ALERT,
+        SET
     }
     public class GameCP : ViewLens {
         //fields
@@ -17,11 +18,9 @@ namespace SEVirtual {
         private PlayerCP _playCP;
         private string _info;
         private VirtualObject _opname;
+        private static string _diff;
         //constructors
         public GameCP() {
-            //for game to keep track of quest finished -- a better way to do this?
-
-            IsPlay = false;
             IsQuit = false;
             IsWin = false;
             _opname = new VirtualObject();
@@ -34,6 +33,7 @@ namespace SEVirtual {
             _info = "";
         }
         //properties
+        public static string GetDiff { get => _diff; }
         public RRLine SecondRun { get; set; }
         public RRLine Running { get => _playCP.Running; set => _playCP.Running = value; }
         public string OpName { get => _opname.Name; set => _opname.Name = value; }
@@ -51,12 +51,14 @@ namespace SEVirtual {
                         text += _playCP.Player.Info;
                         text += "\n>>>Press wasd for movement\n";
                         text += "\n>>>Press f to find\n";
+                        text += "\n>>>Press v to check if you have lost\n";
                         text += "\n>>>Press q to return to menu\n";
                         return text;
                     case GameMode.MENU:
                         text += "\nMAIN MENU";
                         text += "\n>>>Press z to play\n";
                         text += "\n>>>Press x to reset\n";
+                        text += "\n>>>Press s to set difficulty\n";
                         text += "\n>>>Press q to quit\n";
                         return text;
                     case GameMode.DIAL:
@@ -64,8 +66,13 @@ namespace SEVirtual {
                         return text;
                     case GameMode.ALERT:
                         text += "\n>>>>>You are about to: " + OpName;
-                        text += "\n>>>>>Press z to confirm: ";
-                        text += "\n>>>>>Press y to cancel: ";
+                        text += "\n>>>>>Press z to confirm";
+                        text += "\n>>>>>Press y to cancel";
+                        return text;
+                    case GameMode.SET:
+                        text += "\nSETTING GAME DIFFICULTY";
+                        text += "\n>>>>>Press q for EASY";
+                        text += "\n>>>>>Press w for HARD";
                         return text;
                 }
                 return "\nError";
@@ -113,12 +120,31 @@ namespace SEVirtual {
         public bool IsQuit { get;set; }
         public bool IsWin { get;set; }
         //methods
+        public void SwitchSet() { Mode = GameMode.SET; }
+        public void SetEasy() 
+        {
+            if (OpName == "SET") { _diff = "EASY"; _info = "\n Difficulty set as EASY."; Mode = GameMode.MENU; }
+            else { OpName = "SET"; SwitchAlert(); }
+        }
+        public void SetHard() 
+        {
+            if (OpName == "SET") { _diff = "HARD"; _info = "\n Difficulty set as HARD."; Mode = GameMode.MENU; }
+            else { OpName = "SET"; SwitchAlert(); }
+        }
+        public void CheckLose()
+        {
+            _playCP.CheckLose();
+            if (_diff == "EASY")
+            {
+                _info = "\nYou cannot lose while in EASY mode.";
+            }
+        }
         public void CheckWin()
         {
             bool result = true;
-            foreach (string name in _playCP.GetQuestNames())
+            foreach (Quest q in _playCP.GetQuests())
             {
-                if (!_playCP.Player.Has(name, "CQ"))
+                if (!_playCP.Player.Has(q.Name, "CQ"))
                 {
                     result = false;
                     break;
@@ -198,7 +224,6 @@ namespace SEVirtual {
         {
             if (OpName == "RESET")
             {
-                IsPlay = false;
                 IsQuit = false;
                 IsWin = false;
                 _opname = new VirtualObject();
@@ -222,7 +247,6 @@ namespace SEVirtual {
             else { OpName = "QUIT"; SwitchAlert(); }
         }
         public void PlayTheGame() {
-            IsPlay = true;
             Mode = GameMode.GAME;
         }
     }

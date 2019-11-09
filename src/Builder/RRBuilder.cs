@@ -42,7 +42,22 @@ namespace SEVirtual {
             pacts.Add(BuildPActGAME());
             pacts.Add(BuildPActDIAL());
             pacts.Add(BuildPActALERT());
+            pacts.Add(BuildPActSET());
             return pacts;
+        }
+        private PlayerAction BuildPActSET()
+        {
+            List<RRLine> setlist = new List<RRLine>();
+
+            RRLine easyline = new RRLine(new ActionVoid(_game.SetEasy));
+            easyline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
+            RRLine hardline = new RRLine(new ActionVoid(_game.SetHard));
+            hardline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('w', ConsoleKey.W, false, false, false));
+
+            setlist.Add(easyline);
+            setlist.Add(hardline);
+
+            return new PlayerAction(setlist, GameMode.SET);
         }
         private PlayerAction BuildPActALERT()
         {
@@ -76,11 +91,14 @@ namespace SEVirtual {
             quitline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
             RRLine playline = new RRLine(new ActionVoid(_game.PlayTheGame));
             playline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('z', ConsoleKey.Z, false, false, false));
+            RRLine setline = new RRLine(new ActionVoid(_game.SwitchSet));
+            setline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('s', ConsoleKey.S, false, false, false));
             RRLine resetline = new RRLine(new ActionVoid(_game.Reset));
             resetline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false));
 
             menulist.Add(quitline);
             menulist.Add(playline);
+            menulist.Add(setline);
             menulist.Add(resetline);
 
             return new PlayerAction(menulist, GameMode.MENU);
@@ -103,6 +121,9 @@ namespace SEVirtual {
             //flipline
             RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
+            //checklose
+            RRLine checklose = new RRLine(new ActionVoid(_game.CheckLose));
+            checklose.PlayerInput = new PlayerInput(new ConsoleKeyInfo('v', ConsoleKey.V, false, false, false));
 
             gamelist.Add(quitline);
             gamelist.Add(movelineW);
@@ -110,6 +131,7 @@ namespace SEVirtual {
             gamelist.Add(movelineS);
             gamelist.Add(movelineA);
             gamelist.Add(flipline);
+            gamelist.Add(checklose);
 
             return new PlayerAction(gamelist, GameMode.GAME);
         }

@@ -160,7 +160,7 @@ namespace SEVirtual {
         {
             if (Tile.Trigger == null) return true;
             if (!(Tile.Trigger is TriggerF)) return true;
-            if ((Tile.Trigger as TriggerF).CanBeFulfilledBy(this)) return true;
+            //if ((Tile.Trigger as TriggerF).CanBeFulfilledBy(this)) return true;
             return false;
         }
         public void FlipTile() {
@@ -187,10 +187,9 @@ namespace SEVirtual {
                     {
                         if (Tile.Trigger is TriggerF)
                         {
-                            if ((Tile.Trigger as TriggerF).CanBeFulfilledBy(this))
-                                Tile.Trigger.FlippedBy(this);
-                            else
-                                _alert += "\nYou can't do this yet.";
+                            if (!(Tile.Trigger as TriggerF).CanBeFulfilledBy(this))
+                                _alert += "\nYou failed the quest!";
+                            Tile.Trigger.FlippedBy(this);
                         }
                         else
                         {

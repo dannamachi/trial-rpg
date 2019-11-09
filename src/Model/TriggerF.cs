@@ -48,6 +48,10 @@ namespace SEVirtual {
                     if ((p.Find(questName,"Q") as Quest).IsFulfilledBy(p)) {
                         p.Complete(questName);
                     }
+                    else
+                    {
+                        p.Remove(questName, "Q");
+                    }
                 }
             }
         }

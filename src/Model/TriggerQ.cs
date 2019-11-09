@@ -16,6 +16,15 @@ namespace SEVirtual {
             _isf = false;
         }
         //properties
+        public List<Quest> Quests
+        {
+            get
+            {
+                if (!_isf)
+                    return _quests;
+                return new List<Quest>();
+            }
+        }
         public override string Info
         {
             get
@@ -41,7 +50,8 @@ namespace SEVirtual {
                 {
                     p.Add(q);
                 }
-                //_isf = true;
+                if (GameCP.GetDiff == "HARD")
+                    _isf = true;
             }
         }
     }

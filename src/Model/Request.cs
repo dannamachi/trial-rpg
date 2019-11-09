@@ -14,13 +14,29 @@ namespace SEVirtual {
         }
         //properties
         //methods
+        public string GetNeededQuest
+        {
+            get
+            {
+                if (_reqCode == 2 || _reqCode == 3) return _objName;
+                return null;
+            }
+        }
+        public string GetNeededArtifact
+        {
+            get
+            {
+                if (_reqCode == 1) return _objName;
+                return null;
+            }
+        }
         public string Info()
         {
             return _objName + " - " + _reqCode;
         }
         ///method to determine if request is fulfilled
         ///0-1: artifact no/yes
-        ///2-3: quest no/yes
+        ///2-4: quest no/yes/not
         public bool IsFulfilledBy(Player p) {
             bool result = false;
             switch (_reqCode) {
@@ -39,6 +55,10 @@ namespace SEVirtual {
             //player must have completed quest
             case 3:
                 result = p.Has(_objName,"CQ");
+                break;
+            //player must not be doing/have done quest
+            case 4:
+                result = !p.Has(_objName, "Q") && !p.Has(_objName, "CQ");
                 break;
             }
             return result;
