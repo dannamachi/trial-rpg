@@ -101,9 +101,7 @@ namespace SEVirtual {
             RRLine movelineA = new RRLine(new ActionMove(_player.Move));
             movelineA.PlayerInput = new PlayerInput(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));
             //flipline
-            RRLine flipline = new RRLine(new ActionVoid(_game.StartDialogue));
-            flipline.Add(new ActionVoid(_player.AddStory));
-            flipline.Add(new ActionVoid(_player.FlipTile));
+            RRLine flipline = new RRLine(new ActionVoid(_player.FlipTile));
             flipline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('f', ConsoleKey.F, false, false, false));
 
             gamelist.Add(quitline);

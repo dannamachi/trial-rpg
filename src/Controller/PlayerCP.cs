@@ -99,7 +99,7 @@ namespace SEVirtual {
         {
             if (Player.Tile != null)
             {
-                if (Player.Tile.Storybook != null)
+                if (Player.Tile.CanBeFlippedBy(Player) && Player.Tile.Storybook != null)
                 {
                     if (!Player.Tile.Storybook.IsRead)
                     {
@@ -153,7 +153,7 @@ namespace SEVirtual {
                 {
                     if (posline.IsFlagged(input))
                     {
-                        if (Mode != GameMode.ALERT)
+                        if (Mode != GameMode.ALERT && Mode != GameMode.DIAL)
                             Running = posline;
                         if (posline is ConLine)
                         {

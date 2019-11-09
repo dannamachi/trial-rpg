@@ -37,9 +37,5 @@ namespace SEVirtual
         }
         public bool IsRead { get => _isr; }
         //methods
-        public void IsReadBy (Player p)
-        {
-
-        }
     }
 }

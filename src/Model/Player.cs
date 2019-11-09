@@ -22,6 +22,7 @@ namespace SEVirtual {
             _alert = "";
         }
         //properties
+        public ActionVoid RunDialogue { get; set; }
         public ActionVoid SwitchAlert { set => _switchalert = value; }
         public VirtualObject OpName { get; set; }
         public int ArtifactCount { get => _arts.Count; }
@@ -67,13 +68,16 @@ namespace SEVirtual {
                 }
                 text += _alert;
                 _alert = "";
-                if (Holding == null)
-                {
-                    text += "\n>>>Press e to pick up object\n";
-                }
-                else
+                if (Holding != null)
                 {
                     text += "\n>>>Press r to place object\n";
+                }
+                if (Tile.Object != null)
+                {
+                    if (Tile.Object is ActionObject)
+                        text += "\n>>>Press c to use item on object\n";
+                    else if (Holding == null)
+                        text += "\n>>>Press e to pick up object\n";
                 }
                 return text;
             }
@@ -97,7 +101,7 @@ namespace SEVirtual {
             if (_arts.Has(name))
             { 
                 Using = Remove(name, "A") as Artifact;
-                _alert = "\nYou are using " + Using.Name + " on " + Tile.Object.Name;
+                _alert = "\nYou used " + Using.Name + " on " + Tile.Object.Name + ".";
             }
         }
         public void RemoveUsed()
@@ -144,6 +148,21 @@ namespace SEVirtual {
                     _convos.Add(Tile.Storybook);
             }
         }
+        private bool HasRead()
+        {
+            if (Tile.Storybook != null)
+            {
+                return Tile.Storybook.IsRead;
+            }
+            return true;
+        }
+        private bool CanRead()
+        {
+            if (Tile.Trigger == null) return true;
+            if (!(Tile.Trigger is TriggerF)) return true;
+            if ((Tile.Trigger as TriggerF).CanBeFulfilledBy(this)) return true;
+            return false;
+        }
         public void FlipTile() {
             if (Tile.Object != null)
             {
@@ -153,21 +172,42 @@ namespace SEVirtual {
             {
                 _alert = "";
             }
-            if (Tile.Trigger != null) {
+            if (!HasRead())
+            {
+                if (CanRead())
+                    RunDialogue();
+                else
+                    _alert += "\nThere's nothing to do here.";
+            }
+            else if (Tile.Trigger != null) {
                 if (Tile.CanBeFlippedBy(this))
-                { 
-                    _alert += "\nYOU FOUND SOMETHING!";
-                    if (OpName.Name == "FLIP") { Tile.Trigger.FlippedBy(this); }
-                    else { OpName.Name = "FLIP"; _switchalert(); }
+                {
+                    _alert += "\nThere's something that you can get here.";
+                    if (OpName.Name == "GET") 
+                    {
+                        if (Tile.Trigger is TriggerF)
+                        {
+                            if ((Tile.Trigger as TriggerF).CanBeFulfilledBy(this))
+                                Tile.Trigger.FlippedBy(this);
+                            else
+                                _alert += "\nYou can't do this yet.";
+                        }
+                        else
+                        {
+                            Tile.Trigger.FlippedBy(this);
+                            _alert += "\nYou got something!";
+                        }
+                    }
+                    else { OpName.Name = "GET"; _switchalert(); }
                 }
                 else
                 {
-                    _alert += "\nYOU FOUND NOTHING...OR IS IT?";
+                    _alert += "\nThere might be something that you can get here.";
                 }
             }
             else
             {
-                _alert += "\nYOU FOUND NOTHING.";
+                _alert += "\nThere's nothing to get here.";
             }
         }
         public void Move(TDir dir) {

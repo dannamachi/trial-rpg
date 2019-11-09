@@ -34,6 +34,8 @@ namespace SEVirtual {
             _info = "";
         }
         //properties
+        public RRLine SecondRun { get; set; }
+        public RRLine Running { get => _playCP.Running; set => _playCP.Running = value; }
         public string OpName { get => _opname.Name; set => _opname.Name = value; }
         public string Alert { get; set; }
         private string Dialogue { get; set; }
@@ -111,6 +113,12 @@ namespace SEVirtual {
         public bool IsQuit { get;set; }
         public bool IsWin { get;set; }
         //methods
+        public void RunDialogue()
+        {
+            StartDialogue();
+            _playCP.Player.AddStory();
+            SecondRun = Running;
+        }
         public void StartDialogue()
         {
             Dialogue = _playCP.GetDialogue();
@@ -128,7 +136,15 @@ namespace SEVirtual {
         public void ToggleDialogue()
         {
             if (Mode != GameMode.DIAL) { Mode = GameMode.DIAL; }
-            else { Mode = GameMode.GAME; }
+            else 
+            { 
+                Mode = GameMode.GAME;
+                if (SecondRun != null)
+                {
+                    SecondRun.Run();
+                    SecondRun = null; 
+                }
+            }
         }
         public void PerformAction(PlayerInput input)
         {
@@ -139,11 +155,13 @@ namespace SEVirtual {
             Mode = _pmode;
             _playCP.Running.Run();
             OpName = "";
+            _playCP.Running = null;
         }
         public void CancelOp()
         {
             Mode = _pmode;
             OpName = "";
+            _playCP.Running = null;
         }
         public void SwitchAlert()
         {
@@ -156,6 +174,7 @@ namespace SEVirtual {
             RRBuilder builder = new RRBuilder(this,playCP.Player);
             playCP.Initialize(builder.BuildPActs());
             playCP.SetInput(builder);
+            playCP.Player.RunDialogue = new ActionVoid(RunDialogue);
             return playCP;
         }
         public void Reset()
