@@ -14,6 +14,7 @@ namespace SEVirtual {
             Player = new Player();
         }
         //properties
+        public RRLine Running { get; set; }
         public GameMode Mode { get; set; }
         public int MaxCol { get => _build.MaxCol; }
         public int MaxRow { get => _build.MaxRow; }
@@ -79,8 +80,8 @@ namespace SEVirtual {
         }
         private PlayerInput GetInputForUseAction()
         {
-            Console.Write(Player.ArtifactList);
-            Console.Write("\n>>>>>Press index of artifact to use: ");
+            Viewer.Display(Player.ArtifactList);
+            Viewer.Display("\n>>>>>Press index of artifact to use: ");
             ConsoleKeyInfo cki = Console.ReadKey();
             PlayerInput input;
             if (ValidIndex(cki))
@@ -89,8 +90,8 @@ namespace SEVirtual {
             }
             else
             {
-                Console.Write("\n>>>>>Invalid input.");
-                input = new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false));
+                Viewer.Display("\n>>>>>Invalid input.");
+                input = null;
             }
             return input;
         }
@@ -135,7 +136,7 @@ namespace SEVirtual {
             else
             {
                 PlayerInput input = GetInputForUseAction();
-                if (!input.EqualsTo(new PlayerInput(new ConsoleKeyInfo('q', ConsoleKey.Q, false, false, false)))) 
+                if (input != null) 
                 {
                     line.Run(Player.Find(ConsoleKeyToInt(input.CKI)).Name);
                     Player.UpdateToken();
@@ -152,6 +153,8 @@ namespace SEVirtual {
                 {
                     if (posline.IsFlagged(input))
                     {
+                        if (Mode != GameMode.ALERT)
+                            Running = posline;
                         if (posline is ConLine)
                         {
                             PerformAction_Con(posline as ConLine);
