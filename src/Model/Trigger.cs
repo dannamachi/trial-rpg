@@ -9,6 +9,8 @@ namespace SEVirtual {
         public Trigger() {
         }
         //properties
+        public abstract List<string> Namelist { get; }
+        public abstract int Count { get; }
         public abstract string Info { get; }
         //methods
         public void FlippedBy(Player p) {

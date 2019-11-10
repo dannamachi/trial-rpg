@@ -16,6 +16,19 @@ namespace SEVirtual {
             _isf = false;
         }
         //properties
+        public override List<string> Namelist
+        {
+            get
+            {
+                List<string> alist = new List<string>();
+                foreach (Quest q in _quests)
+                {
+                    alist.Add(q.Name + " - " + q.Description);
+                }
+                return alist;
+            }
+        }
+        public override int Count { get => _quests.Count; }
         public List<Quest> Quests
         {
             get
@@ -50,7 +63,7 @@ namespace SEVirtual {
                 {
                     p.Add(q);
                 }
-                if (GameCP.GetDiff == "HARD")
+                if (p.Diff.Name == "HARD")
                     _isf = true;
             }
         }

@@ -43,6 +43,7 @@ namespace SEVirtual {
         {
             if (type == "V" && _voidFuncs.Count != 0) { return true; }
             if (type == "M" && _moveFunc != null) { return true; }
+            if (type == "U" && _useFunc != null) { return true; }
             return false;
         }
         public bool IsFlagged(PlayerInput inp)

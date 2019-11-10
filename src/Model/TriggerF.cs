@@ -14,6 +14,8 @@ namespace SEVirtual {
             }
         }
         //properties
+        public override int Count { get => _questNames.Count; }
+        public override List<string> Namelist { get => _questNames; }
         public override string Info
         {
             get
@@ -28,31 +30,9 @@ namespace SEVirtual {
             }
         }
         //methods
-        public bool CanBeFulfilledBy(Player p)
-        {
-            foreach (string questName in _questNames)
-            {
-                if (p.Has(questName, "Q"))
-                {
-                    if ((p.Find(questName, "Q") as Quest).IsFulfilledBy(p))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
         protected override void PerformFlip(Player p) {
             foreach (string questName in _questNames) {
-                if (p.Has(questName,"Q")) {
-                    if ((p.Find(questName,"Q") as Quest).IsFulfilledBy(p)) {
-                        p.Complete(questName);
-                    }
-                    else
-                    {
-                        p.Remove(questName, "Q");
-                    }
-                }
+                p.Attempt(questName);
             }
         }
     }

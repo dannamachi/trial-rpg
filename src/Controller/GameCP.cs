@@ -18,7 +18,7 @@ namespace SEVirtual {
         private PlayerCP _playCP;
         private string _info;
         private VirtualObject _opname;
-        private static string _diff;
+        private VirtualObject _diff;
         //constructors
         public GameCP() {
             IsQuit = false;
@@ -33,7 +33,11 @@ namespace SEVirtual {
             _info = "";
         }
         //properties
-        public static string GetDiff { get => _diff; }
+        public string Diff 
+        { 
+            get => _diff.Name;
+            set => _diff.Name = value;
+        }
         public RRLine SecondRun { get; set; }
         public RRLine Running { get => _playCP.Running; set => _playCP.Running = value; }
         public string OpName { get => _opname.Name; set => _opname.Name = value; }
@@ -123,18 +127,18 @@ namespace SEVirtual {
         public void SwitchSet() { Mode = GameMode.SET; }
         public void SetEasy() 
         {
-            if (OpName == "SET") { _diff = "EASY"; _info = "\n Difficulty set as EASY."; Mode = GameMode.MENU; }
+            if (OpName == "SET") { Diff = "EASY"; _info = "\n Difficulty set as EASY."; Mode = GameMode.MENU; }
             else { OpName = "SET"; SwitchAlert(); }
         }
         public void SetHard() 
         {
-            if (OpName == "SET") { _diff = "HARD"; _info = "\n Difficulty set as HARD."; Mode = GameMode.MENU; }
+            if (OpName == "SET") { Diff = "HARD"; _info = "\n Difficulty set as HARD."; Mode = GameMode.MENU; }
             else { OpName = "SET"; SwitchAlert(); }
         }
         public void CheckLose()
         {
             _playCP.CheckLose();
-            if (_diff == "EASY")
+            if (_diff.Name == "EASY")
             {
                 _info = "\nYou cannot lose while in EASY mode.";
             }
@@ -217,7 +221,12 @@ namespace SEVirtual {
             RRBuilder builder = new RRBuilder(this,playCP.Player);
             playCP.Initialize(builder.BuildPActs());
             playCP.SetInput(builder);
+            //dialogue
             playCP.Player.RunDialogue = new ActionVoid(RunDialogue);
+            //diff setting
+            _diff = new VirtualObject();
+            Diff = "EASY";
+            playCP.Player.Diff = _diff;
             return playCP;
         }
         public void Reset()

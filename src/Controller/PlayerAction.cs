@@ -40,7 +40,8 @@ namespace SEVirtual {
             }
             if (p.Tile.Object is ActionObject)
             {
-                lines.Add(p.Tile.Object.ActionLine);
+                if ((p.Tile.Object.ActionLine as ConLine).IsDoableBy(p))
+                    lines.Add(p.Tile.Object.ActionLine);
             }
             else if (p.Tile.Object is GameObject && p.Holding == null)
             { 

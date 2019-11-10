@@ -16,6 +16,19 @@ namespace SEVirtual {
             _isf = false;
         }
         //properties
+        public override List<string> Namelist
+        {
+            get
+            {
+                List<string> alist = new List<string>();
+                foreach (Artifact a in _arts)
+                {
+                    alist.Add(a.Name + " - " + a.Description);
+                }
+                return alist;
+            }
+        }
+        public override int Count { get => _arts.Count; }
         public List<Artifact> Artifacts
         {
             get
@@ -45,7 +58,7 @@ namespace SEVirtual {
                 {
                     p.Add(art);
                 }
-                if (GameCP.GetDiff == "HARD")
+                if (p.Diff.Name == "HARD")
                     _isf = true;
             }
         }

@@ -176,18 +176,22 @@ namespace SEVirtual {
             }
             return -1;
         }
-        private bool ValidIndex(ConsoleKeyInfo cki)
+        private bool ValidIndex(ConsoleKeyInfo cki, string key)
         {
             int index = ConsoleKeyToInt(cki);
-            return index >= 0 && index < Player.ArtifactCount;
+            if (key == "A")
+                return index >= 0 && index < Player.ArtifactCount;
+            else if (key == "Q")
+                return index >= 0 && index < Player.QuestCount;
+            else return false;
         }
-        private PlayerInput GetInputForUseAction()
+        private PlayerInput GetInputForUseAction(string key)
         {
-            Viewer.Display(Player.ArtifactList);
-            Viewer.Display("\n>>>>>Press index of artifact to use: ");
+            Viewer.Display(Player.GetList(key));
+            Viewer.Display("\n>>>>>Press index to choose: ");
             ConsoleKeyInfo cki = Console.ReadKey();
             PlayerInput input;
-            if (ValidIndex(cki))
+            if (ValidIndex(cki, key))
             {
                 input = new PlayerInput(cki);
             }
@@ -238,12 +242,27 @@ namespace SEVirtual {
             }
             else
             {
-                PlayerInput input = GetInputForUseAction();
+                //use an artifact on an AO
+                PlayerInput input = GetInputForUseAction("A");
                 if (input != null) 
                 {
-                    line.Run(Player.Find(ConsoleKeyToInt(input.CKI)).Name);
+                    line.Run(Player.Find(ConsoleKeyToInt(input.CKI),"A").Name);
                     Player.UpdateToken();
                     Player.RemoveUsed();
+                }
+            }
+        }
+        private void PerformAction_Use(RRLine line)
+        {
+            string key = null;
+            if (line.PlayerInput.CKI.Key == ConsoleKey.K) { key = "A"; }
+            else if (line.PlayerInput.CKI.Key == ConsoleKey.M) { key = "Q"; }
+            if (key != null)
+            {
+                PlayerInput input = GetInputForUseAction(key);
+                if (input != null)
+                {
+                    line.Run(Player.Find(ConsoleKeyToInt(input.CKI),key).Name);
                 }
             }
         }
@@ -262,6 +281,7 @@ namespace SEVirtual {
                         {
                             PerformAction_Con(posline as ConLine);
                         }
+                        else if (posline.IsOfType("U")) { PerformAction_Use(posline); }
                         else if (posline.IsOfType("M")) { PerformAction_Move(posline, input); }
                         else if (posline.IsOfType("V")) { PerformAction_Void(posline); }
                     }

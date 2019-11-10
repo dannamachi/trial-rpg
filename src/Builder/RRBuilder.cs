@@ -124,6 +124,11 @@ namespace SEVirtual {
             //checklose
             RRLine checklose = new RRLine(new ActionVoid(_game.CheckLose));
             checklose.PlayerInput = new PlayerInput(new ConsoleKeyInfo('v', ConsoleKey.V, false, false, false));
+            //drops
+            RRLine adrop = new RRLine(new ActionUse(_player.DropArtifact));
+            adrop.PlayerInput = new PlayerInput(new ConsoleKeyInfo('k', ConsoleKey.K, false, false, false));
+            RRLine qdrop = new RRLine(new ActionUse(_player.DropQuest));
+            qdrop.PlayerInput = new PlayerInput(new ConsoleKeyInfo('m', ConsoleKey.M, false, false, false));
 
             gamelist.Add(quitline);
             gamelist.Add(movelineW);
@@ -132,6 +137,8 @@ namespace SEVirtual {
             gamelist.Add(movelineA);
             gamelist.Add(flipline);
             gamelist.Add(checklose);
+            gamelist.Add(adrop);
+            gamelist.Add(qdrop);
 
             return new PlayerAction(gamelist, GameMode.GAME);
         }

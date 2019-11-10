@@ -22,22 +22,12 @@ namespace SEVirtual {
             _alert = "";
         }
         //properties
+        public VirtualObject Diff { get; set; }
         public ActionVoid RunDialogue { get; set; }
         public ActionVoid SwitchAlert { set => _switchalert = value; }
         public VirtualObject OpName { get; set; }
+        public int QuestCount { get => _quests.Count; }
         public int ArtifactCount { get => _arts.Count; }
-        public string ArtifactList
-        {
-            get
-            {
-                string text = "";
-                for (int i = 0; i < _arts.NameList.Count; i++)
-                {
-                    text += "\n" + i + " " + _arts.NameList[i];
-                }
-                return text;
-            }
-        }
         public Artifact Using { get; set; }
         public GameObject Holding { get; set; }
         public string Info
@@ -68,22 +58,94 @@ namespace SEVirtual {
                 }
                 text += _alert;
                 _alert = "";
+                text += "\n>>>Press c to use item on object\n";
                 if (Holding != null)
                 {
                     text += "\n>>>Press r to place object\n";
                 }
-                if (Tile.Object != null)
+                else
                 {
-                    if (Tile.Object is ActionObject)
-                        text += "\n>>>Press c to use item on object\n";
-                    else if (Holding == null)
-                        text += "\n>>>Press e to pick up object\n";
+                    text += "\n>>>Press e to pick up object\n";
+                }
+                if (_quests.Count > 0)
+                {
+                    text += "\n>>>>>Press m to drop a quest\n";
+                }
+                if (_arts.Count > 0)
+                {
+                    text += "\n>>>>>Press k to drop an artifact\n";
                 }
                 return text;
             }
         }
         public TileV Tile { get;set; }
-        //methods 
+        //methods
+        private bool CanAdd(string key, int num)
+        {
+            if (key == "A") { return _arts.Count + num <= _arts.Capacity; }
+            if (key == "Q") { return _quests.Count + num <= _quests.Capacity; }
+            return true;
+        }
+        public string GetList(string key)
+        {
+            string text = "";
+            switch (key)
+            {
+                case "A":
+                    for (int i = 0; i < _arts.NameList.Count; i++)
+                    {
+                        text += "\n" + i + " " + _arts.NameList[i];
+                    }
+                    break;
+                case "Q":
+                    for (int i = 0; i < _quests.NameList.Count; i++)
+                    {
+                        text += "\n" + i + " " + _quests.NameList[i];
+                    }
+                    break;
+                case "CQ":
+                    for (int i = 0; i < _cquests.NameList.Count; i++)
+                    {
+                        text += "\n" + i + " " + _cquests.NameList[i];
+                    }
+                    break;
+            }
+            return text;
+        }
+        private bool CanFulfill(string questname)
+        {
+            if (Has(questname, "Q"))
+            {
+                return (Find(questname, "Q") as Quest).IsFulfilledBy(this);
+            }
+            return false;
+        }
+        private bool CanFulfill(TriggerF trig)
+        {
+            foreach (string questname in trig.Namelist)
+            {
+                if (!CanFulfill(questname))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public void DropQuest(string name)
+        {
+            Drop(name, "Q");
+        }
+        public void DropArtifact(string name)
+        {
+            Drop(name, "A");
+        }
+        private void Drop(string name, string key)
+        {
+            if (Has(name,key))
+            {
+                Remove(name, key);
+            }
+        }
         public void UpdateToken()
         {
             ConToken token = _ctokens.GetLast as ConToken;
@@ -156,11 +218,19 @@ namespace SEVirtual {
             }
             return true;
         }
+        private bool IsDoingQuestFrom(TriggerF trig)
+        {
+            foreach (string qname in trig.Namelist)
+            {
+                if (Has(qname, "Q")) return true;
+            }
+            return false;
+        }
         private bool CanRead()
         {
             if (Tile.Trigger == null) return true;
             if (!(Tile.Trigger is TriggerF)) return true;
-            //if ((Tile.Trigger as TriggerF).CanBeFulfilledBy(this)) return true;
+            if (IsDoingQuestFrom(Tile.Trigger as TriggerF)) return true;
             return false;
         }
         public void FlipTile() {
@@ -187,17 +257,46 @@ namespace SEVirtual {
                     {
                         if (Tile.Trigger is TriggerF)
                         {
-                            if (!(Tile.Trigger as TriggerF).CanBeFulfilledBy(this))
-                                _alert += "\nYou failed the quest!";
+                            if (!CanFulfill(Tile.Trigger as TriggerF))
+                                _alert += "\nYou failed one of the quest(s)!";
                             Tile.Trigger.FlippedBy(this);
                         }
                         else
                         {
-                            Tile.Trigger.FlippedBy(this);
-                            _alert += "\nYou got something!";
+                            string key = "";
+                            if (Tile.Trigger is TriggerA) { key = "A"; }
+                            else { key = "Q"; }
+                            if (CanAdd(key, Tile.Trigger.Count))
+                            {
+                                Tile.Trigger.FlippedBy(this);
+                                _alert += "\nYou got something!";
+                            }
+                            else
+                            {
+                                _alert += "\nYou cannot get this due to limited space.";
+                            }
                         }
                     }
-                    else { OpName.Name = "GET"; _switchalert(); }
+                    else 
+                    { 
+                        OpName.Name = "GET";
+                        string item = "";
+                        if (Tile.Trigger is TriggerA) { item = "artifact(s)"; }
+                        else if (Tile.Trigger is TriggerQ) { item = "quest(s)"; }
+                        if (item != "")
+                        {
+                            Viewer.Display("\nGaining " + Tile.Trigger.Count + " " + item);
+                        }
+                        else
+                        {
+                            Viewer.Display("\nAttempting " + Tile.Trigger.Count + " quest(s)");
+                        } 
+                        foreach (string qname in Tile.Trigger.Namelist)
+                        {
+                                Viewer.Display(_alert += "\n" + qname);
+                        }                       
+                        _switchalert(); 
+                    }
                 }
                 else
                 {
@@ -214,9 +313,12 @@ namespace SEVirtual {
                 Tile = Tile.GetNextTile(dir);
             }
         }
-        public void Complete(string questname) {
+        public void Attempt(string questname) {
             if (Has(questname,"Q")) {
-                _cquests.Add(Remove(questname,"Q"));
+                if (CanFulfill(questname))
+                    _cquests.Add(Remove(questname,"Q"));
+                else
+                    Remove(questname, "Q");
             }
         }
         public void Add(VirtualObject obj) {
@@ -240,9 +342,10 @@ namespace SEVirtual {
         public VirtualObject Find(int index,string key="A")
         {
             if (key == "A") { return _arts.Find(index); }
+            else if (key == "Q") { return _quests.Find(index); }
             return null;
         }
-        public VirtualObject Remove(string name, string key="A") {
+        private VirtualObject Remove(string name, string key="A") {
             if (key == "A") { return _arts.Remove(name); }
             else if (key == "Q") { return _quests.Remove(name); }
             return null;

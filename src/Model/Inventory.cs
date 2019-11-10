@@ -9,8 +9,10 @@ namespace SEVirtual {
         //constructors
         public Inventory() {
             _arts = new List<VirtualObject>();
+            Capacity = 10;
         }
         //properties
+        public int Capacity { get; set; }
         public VirtualObject GetLast { get => _arts[Count - 1]; }
         public int Count { get => _arts.Count; }
         public List<string> NameList
