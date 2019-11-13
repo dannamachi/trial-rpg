@@ -38,16 +38,41 @@ namespace SEVirtual {
             {
                 lines.Add(line);
             }
-            if (p.Tile.Object is ActionObject)
+            //real time variable actions
+            if (Mode == GameMode.GAME)
             {
-                if ((p.Tile.Object.ActionLine as ConLine).IsDoableBy(p))
-                    lines.Add(p.Tile.Object.ActionLine);
+                if (p.Tile != null)
+                {
+                    if (p.Tile.Object is ActionObject)
+                    {
+                        if ((p.Tile.Object.ActionLine as ConLine).IsDoableBy(p))
+                            lines.Add(p.Tile.Object.ActionLine);
+                    }
+                    else if (p.Tile.Object is GameObject && p.Holding == null)
+                    {
+                        lines.Add(p.Tile.Object.ActionLine);
+                    }
+                }
+                if (p.Holding != null) { lines.Add(p.Holding.ActionLine); }
             }
-            else if (p.Tile.Object is GameObject && p.Holding == null)
-            { 
-                lines.Add(p.Tile.Object.ActionLine); 
+            else if (Mode == GameMode.DIAL)
+            {
+                if (p.Tile.Storybook != null)
+                {
+                    if (p.Tile.Storybook.NeedChoice)
+                    {
+                        lines.Add(p.ChooseDialogue);
+                        p.Tile.Storybook.NeedChoice = false;
+                    }
+                }
             }
-            if (p.Holding != null) { lines.Add(p.Holding.ActionLine); }
+            else if (Mode == GameMode.MENU)
+            {
+                if (p.Diff.Name == "EASY")
+                {
+                    lines.Add(p.ResetGame);
+                }
+            }
             return lines;
         }
         public void ActivateLines() {
