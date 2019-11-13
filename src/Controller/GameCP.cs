@@ -9,38 +9,54 @@ namespace SEVirtual {
         GAME,
         DIAL,
         ALERT,
-        SET
+        SET,
+        MAP
     }
     public class GameCP : ViewLens {
-        //fields
+        //general fields
+        private RRBuilder _builder;
         private GameMode _pmode;
         private GameMode _mode;
-        private PlayerCP _playCP;
         private string _info;
         private VirtualObject _opname;
+        private bool _lose;
+        //map specific fields
         private VirtualObject _diff;
+        private string _map;
+        private PlayerCP _playCP;
         //constructors
         public GameCP() {
-            IsQuit = false;
-            IsWin = false;
-            _opname = new VirtualObject();
             _playCP = CreatePlayCP();
-            _playCP.Player.OpName = _opname;
-            _playCP.Player.SwitchAlert = new ActionVoid(SwitchAlert);
-            Mode = GameMode.MENU;
+            IsQuit = false;
+            IsEnd = false;
+            _opname = new VirtualObject();
+            Mode = GameMode.MAP;
             Dialogue = "";
             Alert = "";
             _info = "";
         }
         //properties
+        public bool IsPlay { get => Mode == GameMode.GAME; }
         public string Diff 
         { 
             get => _diff.Name;
-            set => _diff.Name = value;
+            set
+            {
+                _diff.Name = value;
+                _playCP.Player.ToggleDiff();
+            }
         }
         public RRLine SecondRun { get; set; }
         public RRLine Running { get => _playCP.Running; set => _playCP.Running = value; }
-        public string OpName { get => _opname.Name; set => _opname.Name = value; }
+        public string OpName
+        {
+            get => _opname.Name;
+            set
+            {
+                _opname.Name = value;
+                _playCP.Player.OpName.Name = value;
+            }
+        }
         public string Alert { get; set; }
         private string Dialogue { get; set; }
         private string ModeInfo
@@ -55,14 +71,15 @@ namespace SEVirtual {
                         text += _playCP.Player.Info;
                         text += "\n>>>Press wasd for movement\n";
                         text += "\n>>>Press f to find\n";
-                        text += "\n>>>Press v to check if you have lost\n";
                         text += "\n>>>Press q to return to menu\n";
                         return text;
                     case GameMode.MENU:
                         text += "\nMAIN MENU";
                         text += "\n>>>Press z to play\n";
-                        text += "\n>>>Press x to reset\n";
-                        text += "\n>>>Press s to set difficulty\n";
+                        text += "\n>>>Press m to choose another chapter\n";
+                        if (Diff == "EASY")
+                            text += "\n>>>Press x to reset chapter\n";
+                        text += "\n>>>Press o to reset game\n";
                         text += "\n>>>Press q to quit\n";
                         return text;
                     case GameMode.DIAL:
@@ -77,6 +94,15 @@ namespace SEVirtual {
                         text += "\nSETTING GAME DIFFICULTY";
                         text += "\n>>>>>Press q for EASY";
                         text += "\n>>>>>Press w for HARD";
+                        if (Diff == null)
+                            text += "\nCannot return unless difficulty has been selected\n";
+                        return text;
+                    case GameMode.MAP:
+                        text += "\nCHAPTER SELECTION";
+                        text += "\n>>>>>Press z to select chapter";
+                        text += "\n>>>>>Press q to return to menu";
+                        if (_map == null)
+                            text += "\nCannot return unless a chapter has been selected\n";
                         return text;
                 }
                 return "\nError";
@@ -120,11 +146,47 @@ namespace SEVirtual {
                 return text;
             }
         }
-        public bool IsPlay { get;set; }
         public bool IsQuit { get;set; }
         public bool IsWin { get;set; }
+        public bool IsLose
+        {
+            get => _lose;
+            set
+            {
+                _lose = value;
+                _playCP.Player.IsLose = value;
+            }
+        }
+        public bool IsEnd { get; set; }
         //methods
-        public void SwitchSet() { Mode = GameMode.SET; }
+        private bool CheckEnd()
+        {
+            return GameMaps.GetAvailMapCount() == 0;
+        }
+        private void CheckLose()
+        {
+            bool result = _playCP.CheckLose();
+            if (result)
+            {
+                Viewer.Display("\nYou have lost! Please reset and try again.");
+            }
+            IsLose = result;
+        }
+        public void SetMap(string name)
+        {
+            _map = name;
+            Reload();
+            _playCP.SetWin(GameMaps.GetWin(_map));
+        }
+        public void SwitchMap()
+        {
+            Mode = GameMode.MAP;
+        }
+        public void SwitchMenu()
+        {
+            if (_map != null && Diff != null)
+                Mode = GameMode.MENU;
+        }
         public void SetEasy() 
         {
             if (OpName == "SET") { Diff = "EASY"; _info = "\n Difficulty set as EASY."; Mode = GameMode.MENU; }
@@ -135,28 +197,13 @@ namespace SEVirtual {
             if (OpName == "SET") { Diff = "HARD"; _info = "\n Difficulty set as HARD."; Mode = GameMode.MENU; }
             else { OpName = "SET"; SwitchAlert(); }
         }
-        public void CheckLose()
-        {
-            _playCP.CheckLose();
-            if (_diff.Name == "EASY")
-            {
-                _info = "\nYou cannot lose while in EASY mode.";
-            }
-        }
         public void CheckWin()
         {
-            bool result = true;
-            foreach (Quest q in _playCP.GetQuests())
-            {
-                if (!_playCP.Player.Has(q.Name, "CQ"))
-                {
-                    result = false;
-                    break;
-                }
-            }
+            bool result = _playCP.CheckWin();
             if (result)
             {
-                Viewer.Display("\nYou won the game!");
+                Viewer.Display("\nYou 've finished the chapter!");
+                GamePath.GetPath().AddChapter(_playCP);
             }
             IsWin = result;
         }
@@ -175,8 +222,9 @@ namespace SEVirtual {
         public void ContinueDialogue()
         {
             Dialogue = _playCP.GetDialogue();
-            if (Dialogue == null)
+            if (_playCP.Player.HasRead())
             {
+                _playCP.Player.AddStory();
                 ToggleDialogue();
             }
         }
@@ -196,6 +244,23 @@ namespace SEVirtual {
         public void PerformAction(PlayerInput input)
         {
             _playCP.PerformAction(input);
+            if (IsPlay)
+            {
+                CheckWin();
+                CheckLose();
+                if (IsWin || IsLose)
+                {
+                    Mode = GameMode.MAP;
+                    _map = "";
+                }
+                if (CheckEnd())
+                {
+                    IsEnd = true;
+                    Viewer.Display("\nGame has ended!");
+                    _playCP.Running = new RRLine(new ActionVoid(GameLoop.Reset));
+                    GameLoop.Reset();
+                }
+            }
         }
         public void RunOp()
         {
@@ -218,31 +283,45 @@ namespace SEVirtual {
         public PlayerCP CreatePlayCP() {
             //rrbuilder and such
             PlayerCP playCP = new PlayerCP();
-            RRBuilder builder = new RRBuilder(this,playCP.Player);
-            playCP.Initialize(builder.BuildPActs());
-            playCP.SetInput(builder);
+            _builder = new RRBuilder(this, playCP.Player);
+            playCP.Initialize(_builder.BuildPActs());
+            //fail quest
+            playCP.Player.FailQuest = new ActionUse(playCP.AddFail);
+            //reset
+            RRLine resetline = new RRLine(new ActionVoid(Reset));
+            resetline.PlayerInput = new PlayerInput(new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false));
+            playCP.Player.ResetGame = resetline;
             //dialogue
             playCP.Player.RunDialogue = new ActionVoid(RunDialogue);
-            //diff setting
+            //initial setting
             _diff = new VirtualObject();
-            Diff = "EASY";
             playCP.Player.Diff = _diff;
+            playCP.Player.OpName = new VirtualObject();
+            playCP.Player.SwitchAlert = new ActionVoid(SwitchAlert);
             return playCP;
+        }
+        private void ReloadPlayerCP()
+        {
+            //tiles
+            _playCP.InitializeGame(_map);
+            _playCP.SetInput(_builder);
+        }
+        private void Reload()
+        {
+            IsWin = false;
+            IsLose = false;
+            ReloadPlayerCP();
+            Mode = GameMode.SET;
+            Dialogue = "";
+            Alert = "";
+            _info = "\nA new game has been loaded.";
+            OpName = "";
         }
         public void Reset()
         {
             if (OpName == "RESET")
             {
-                IsQuit = false;
-                IsWin = false;
-                _opname = new VirtualObject();
-                _playCP = CreatePlayCP();
-                _playCP.Player.OpName = _opname;
-                _playCP.Player.SwitchAlert = new ActionVoid(SwitchAlert);
-                Mode = GameMode.MENU;
-                Dialogue = "";
-                Alert = "";
-                _info = "\nGame has been reset.";
+                Reload();
             }
             else { OpName = "RESET"; SwitchAlert(); }
         }
@@ -256,7 +335,8 @@ namespace SEVirtual {
             else { OpName = "QUIT"; SwitchAlert(); }
         }
         public void PlayTheGame() {
-            Mode = GameMode.GAME;
+            if (_map != null && !IsWin && !IsLose)
+                Mode = GameMode.GAME;
         }
     }
 }

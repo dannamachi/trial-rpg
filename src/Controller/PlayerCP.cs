@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SEVirtual {
@@ -8,12 +9,17 @@ namespace SEVirtual {
         private List<TileV> _tiles;
         private List<PlayerAction> _pacts;
         private TileVBuilder _build;
+        private List<string> _wins;
+        private string _map;
+        private List<string> _failed;
         //constructors
         public PlayerCP() 
         {
             Player = new Player();
         }
         //properties
+        public string Map { get => _map; }
+        public string WinBy { get; set; }
         public RRLine Running { get; set; }
         public GameMode Mode { get; set; }
         public int MaxCol { get => _build.MaxCol; }
@@ -61,91 +67,69 @@ namespace SEVirtual {
         }
         public Player Player { get; set; }
         //methods
-        private bool FindQuest(string name)
+        public bool CheckLose()
         {
-            foreach (TileV tile in _tiles)
-            {
-                if (tile.Trigger != null)
-                {
-                    if (tile.Trigger is TriggerQ)
-                    {
-                        foreach (Quest q in (tile.Trigger as TriggerQ).Quests)
-                        {
-                            if (q.IsCalled(name))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-        private bool FindArtifact(string name)
-        {
-            foreach (TileV tile in _tiles)
-            {
-                if (tile.Trigger != null)
-                {
-                    if (tile.Trigger is TriggerA)
-                    {
-                        foreach (Artifact art in (tile.Trigger as TriggerA).Artifacts)
-                        {
-                            if (art.IsCalled(name))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-        public void CheckLose()
-        {
-            bool result = true;
-            //get all requests for an artifact
-            List<Request> reqs = new List<Request>();
-            foreach (Quest q in GetQuests())
-            {
-                foreach (Request req in q.ArtifactRequests)
-                {
-                    reqs.Add(req);
-                }
-            }
-            //find in map if artifact still there
-            foreach (Request req in reqs)
-            {
-                if (!FindArtifact(req.GetNeededArtifact))
-                {
-                    result = false;
-                }
-            }
-            //get all requests that need another quest
-            reqs = new List<Request>();
-            foreach (Quest q in GetQuests())
-            {
-                foreach (Request req in q.QuestRequests)
-                {
-                    reqs.Add(req);
-                }
-            }
-            //find in map if quest still avail
-            foreach (Request req in reqs)
-            {
-                if (!FindQuest(req.GetNeededQuest))
-                {
-                    result = false;
-                }
-            }
-            if (!result)
-            {
-                Viewer.Display("\nYou've lost the game, please proceed to reset.");
-            }
+            if (Player.Diff.Name == "EASY") return false;
+            List<string> qnames = new List<string>();
+            if (_wins != null) { qnames = _wins; }
             else
             {
-                Viewer.Display("\nYou haven't lost the game yet!");
+                foreach (Quest q in GetQuests())
+                {
+                    qnames.Add(q.Name);
+                }
             }
+            foreach (string win in qnames)
+            {
+                if (!_failed.Contains(win))
+                    return false;
+            }
+            return true;
+        }
+        public void AddFail(string q)
+        {
+            if (!_failed.Contains(q))
+                _failed.Add(q);
+        }
+        public bool CheckWin()
+        {
+            if (_wins == null) return CheckWinD(GetQuests());
+            else return CheckWinD(_wins);
+        }
+        //player wins if any of win quests is completed
+        private bool CheckWinD(List<string> qs)
+        {
+            bool result = false;
+            foreach (string q in qs)
+            {
+                if (Player.Has(q, "CQ"))
+                {
+                    WinBy = q;
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+        //player wins if all quests are completed (default)
+        private bool CheckWinD(List<Quest> qs)
+        {
+            bool result = true;
+            foreach (Quest q in qs)
+            {
+                if (!Player.Has(q.Name, "CQ"))
+                {
+                    WinBy = "ALLQUESTS";
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+        public void SetWin(string qnames)
+        {
+            if (qnames != null)
+                _wins = qnames.Split("|").ToList();
         }
         public List<Quest> GetQuests()
         {
@@ -179,15 +163,17 @@ namespace SEVirtual {
         private bool ValidIndex(ConsoleKeyInfo cki, string key)
         {
             int index = ConsoleKeyToInt(cki);
-            if (key == "A")
-                return index >= 0 && index < Player.ArtifactCount;
-            else if (key == "Q")
-                return index >= 0 && index < Player.QuestCount;
-            else return false;
+            if (key == "M")
+                return index >= 0 && index < GameMaps.GetAvailMapCount();
+            else
+                return index >= 0 && index < Player.GetCount(key);
         }
         private PlayerInput GetInputForUseAction(string key)
         {
-            Viewer.Display(Player.GetList(key));
+            if (key != "M")
+                Viewer.Display(Player.GetList(key));
+            else 
+                Viewer.Display(GameMaps.GetAvailMaplist());
             Viewer.Display("\n>>>>>Press index to choose: ");
             ConsoleKeyInfo cki = Console.ReadKey();
             PlayerInput input;
@@ -252,17 +238,40 @@ namespace SEVirtual {
                 }
             }
         }
-        private void PerformAction_Use(RRLine line)
+        private void PerformAction_Use(RRLine line, GameMode mode)
         {
-            string key = null;
-            if (line.PlayerInput.CKI.Key == ConsoleKey.K) { key = "A"; }
-            else if (line.PlayerInput.CKI.Key == ConsoleKey.M) { key = "Q"; }
-            if (key != null)
+            //drop a/q
+            if (mode == GameMode.GAME)
             {
-                PlayerInput input = GetInputForUseAction(key);
+                string key = null;
+                if (line.PlayerInput.CKI.Key == ConsoleKey.K) { key = "A"; }
+                else if (line.PlayerInput.CKI.Key == ConsoleKey.M) { key = "Q"; }
+                if (key != null)
+                {
+                    PlayerInput input = GetInputForUseAction(key);
+                    if (input != null)
+                    {
+                        line.Run(Player.Find(ConsoleKeyToInt(input.CKI), key).Name);
+                    }
+                }
+            }
+            //switch map
+            else if (mode == GameMode.MAP)
+            {
+                PlayerInput input = GetInputForUseAction("M");
                 if (input != null)
                 {
-                    line.Run(Player.Find(ConsoleKeyToInt(input.CKI),key).Name);
+                    line.Run(GameMaps.GetMapName(ConsoleKeyToInt(input.CKI)));
+                }
+            }
+            //choose dialogue
+            else if (mode == GameMode.DIAL)
+            {
+                PlayerInput input = GetInputForUseAction("C");
+                if (input != null)
+                {
+                    string choice = Player.Tile.Storybook.Choices[ConsoleKeyToInt(input.CKI)];
+                    line.Run(choice);
                 }
             }
         }
@@ -281,12 +290,39 @@ namespace SEVirtual {
                         {
                             PerformAction_Con(posline as ConLine);
                         }
-                        else if (posline.IsOfType("U")) { PerformAction_Use(posline); }
+                        else if (posline.IsOfType("U")) { PerformAction_Use(posline, Mode); }
                         else if (posline.IsOfType("M")) { PerformAction_Move(posline, input); }
                         else if (posline.IsOfType("V")) { PerformAction_Void(posline); }
                     }
                 }
             }
+        }
+        public void InitializeGame(string map)
+        {
+            _failed = new List<string>(); 
+            //initialize player and tiles n such here
+            TileVBuilder tbuilder = new TileVBuilder();
+            tbuilder.SetMap(map);
+            _tiles = tbuilder.LoadTileVsFromFile();
+            //get random first tile - or fixed in maps.txt?
+            Random rand = new Random();
+            TileV ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
+            while (ftile.Blocked)
+            {
+                ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
+            }
+            Player.Tile = ftile;
+            _build = tbuilder;
+            //initialize dialogue
+            StoryBuilder sbuilder = new StoryBuilder();
+            sbuilder.SetMap(map);
+            sbuilder.LoadBranches();
+            _tiles = sbuilder.LoadBooks(_tiles, _build);
+            //initialize objects
+            ObjectBuilder obuilder = new ObjectBuilder(Player);
+            obuilder.SetMap(map);
+            _tiles = obuilder.AddObjectFromFile(_tiles);
+            _map = map;
         }
         public void Initialize(List<PlayerAction> pacts) {
             //initialize pacts
@@ -295,20 +331,6 @@ namespace SEVirtual {
             {
                 _pacts.Add(pact);
             }
-            //initialize player and tiles n such here
-            TileVBuilder tbuilder= new TileVBuilder();
-            _tiles = tbuilder.LoadTileVsFromFile();
-            Random rand = new Random();
-            TileV ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
-            while (ftile.Blocked)
-            { 
-                ftile = tbuilder.FindTileAt(_tiles, rand.Next(0, tbuilder.MaxCol), rand.Next(0, tbuilder.MaxRow));
-            }
-            Player.Tile = ftile;
-            _build = tbuilder;
-            //initialize objects
-            ObjectBuilder obuilder = new ObjectBuilder(Player);
-            _tiles = obuilder.AddObjectFromFile(_tiles);
         }
     }
 }

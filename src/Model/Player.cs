@@ -12,6 +12,7 @@ namespace SEVirtual {
         private Inventory _convos;
         private string _alert;
         private ActionVoid _switchalert;
+        private RRLine _choose;
         //constructors
         public Player() {
             _quests = new Inventory();
@@ -20,14 +21,19 @@ namespace SEVirtual {
             _convos = new Inventory();
             _ctokens = new Inventory();
             _alert = "";
+            _choose = new RRLine(new ActionUse(ChooseDial));
+            _choose.PlayerInput = new PlayerInput(new ConsoleKeyInfo('c', ConsoleKey.C, false, false, false));
         }
         //properties
+        public bool IsLose { get; set; }
+        public List<string> ConvoList { get => _convos.NameList; }
+        public RRLine ChooseDialogue { get => _choose; }
         public VirtualObject Diff { get; set; }
+        public ActionUse FailQuest { get; set; }
+        public RRLine ResetGame { get; set; }
         public ActionVoid RunDialogue { get; set; }
         public ActionVoid SwitchAlert { set => _switchalert = value; }
         public VirtualObject OpName { get; set; }
-        public int QuestCount { get => _quests.Count; }
-        public int ArtifactCount { get => _arts.Count; }
         public Artifact Using { get; set; }
         public GameObject Holding { get; set; }
         public string Info
@@ -80,6 +86,49 @@ namespace SEVirtual {
         }
         public TileV Tile { get;set; }
         //methods
+        public bool HasRead()
+        {
+            if (Tile != null)
+            {
+                if (Tile.Storybook != null)
+                {
+                    return Tile.Storybook.IsRead;
+                }
+            }
+            return true;
+        }
+        public int GetCount(string key)
+        {
+            switch (key)
+            {
+                case "A": return _arts.Count;
+                case "Q": return _quests.Count;
+                case "CQ": return _cquests.Count;
+                case "C":
+                    if (Tile == null) return 0;
+                    if (Tile.Storybook == null) return 0;
+                    return Tile.Storybook.Choices.Count;
+                default: return 0;
+            }
+        }
+        private void ChooseDial(string name)
+        {
+            Tile.Storybook.Chosen = name;
+        }
+        public void ToggleDiff()
+        {
+            int num;
+            if (Diff.Name == "HARD")
+            {
+                num = 5;
+            }
+            else
+            {
+                num = 10;
+            }
+            _arts.Capacity = num;
+            _quests.Capacity = num;
+        }
         private bool CanAdd(string key, int num)
         {
             if (key == "A") { return _arts.Count + num <= _arts.Capacity; }
@@ -107,6 +156,14 @@ namespace SEVirtual {
                     for (int i = 0; i < _cquests.NameList.Count; i++)
                     {
                         text += "\n" + i + " " + _cquests.NameList[i];
+                    }
+                    break;
+                case "C":
+                    if (Tile == null) break;
+                    if (Tile.Storybook == null) break;
+                    for (int i = 0; i < Tile.Storybook.Choices.Count; i++)
+                    {
+                        text += "\n" + i + " " + Tile.Storybook.Choices[i];
                     }
                     break;
             }
@@ -210,14 +267,6 @@ namespace SEVirtual {
                     _convos.Add(Tile.Storybook);
             }
         }
-        private bool HasRead()
-        {
-            if (Tile.Storybook != null)
-            {
-                return Tile.Storybook.IsRead;
-            }
-            return true;
-        }
         private bool IsDoingQuestFrom(TriggerF trig)
         {
             foreach (string qname in trig.Namelist)
@@ -316,9 +365,12 @@ namespace SEVirtual {
         public void Attempt(string questname) {
             if (Has(questname,"Q")) {
                 if (CanFulfill(questname))
-                    _cquests.Add(Remove(questname,"Q"));
+                    _cquests.Add(Remove(questname, "Q"));
                 else
+                {
                     Remove(questname, "Q");
+                    FailQuest(questname);
+                }
             }
         }
         public void Add(VirtualObject obj) {
