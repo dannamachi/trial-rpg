@@ -18,6 +18,7 @@ namespace SEVirtual
         {
             _preset = preset;
         }
+        public ConToken Preset { get => _preset; }
         public ConLine(ActionUse usefunc,ConToken preset, List<ClearToken> reqs) : this(usefunc,preset)
         {
             _req = new List<ClearToken>();
@@ -27,17 +28,9 @@ namespace SEVirtual
             }
         }
         //properties
-        public string ClearTokens 
-        { 
-            get
-            {
-                string text = "";
-                foreach (ClearToken token in _req)
-                {
-                    text += token.Name + ",";
-                }
-                return text;
-            } 
+        public List<ClearToken> ClearTokens 
+        {
+            get => _req;
         }
         public string ActionType { get => _preset.ActionType; }
         //methods

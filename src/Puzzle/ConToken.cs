@@ -20,10 +20,6 @@ namespace SEVirtual
         {
             return p.Has(Name, "CT");
         }
-        public bool BelongsToLine(string linename)
-        {
-            return linename.ToLower() == _desc[0].ToLower();
-        }
         public void SetKey(string key)
         {
             if (!IsNonKey)
