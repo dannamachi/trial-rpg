@@ -10,14 +10,20 @@ namespace SEVirtual
         //fields
         private List<GameObject> _objs;
         private Player _player;
+        private string _filename;
         //constructors
         public ObjectBuilder(Player p)
         {
             _objs = new List<GameObject>();
             _player = p;
+            _filename = "objectdata.txt";
         }
         //properties
         //methods
+        public void SetMap(string pref)
+        {
+            _filename = "data/" + pref + "_" + _filename;
+        }
         private ActionObject GetActionObject(List<string> array, StreamReader reader)
         {
             string name = array[0];
@@ -57,7 +63,7 @@ namespace SEVirtual
         }
         public List<TileV> AddObjectFromFile(List<TileV> tiles)
         {
-            StreamReader reader = new StreamReader("objectdata.txt");
+            StreamReader reader = new StreamReader(_filename);
             if (reader != null)
             {
                 TileVBuilder builder = new TileVBuilder();

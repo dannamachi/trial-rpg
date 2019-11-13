@@ -14,6 +14,19 @@ namespace SEVirtual
         }
         //properties
         //methods
+        public bool IsClearedBy(GameChapter chap)
+        {
+            string[] array = Name.Split('_');
+            if (array[0] == "read")
+            {
+                return chap.HasRead(array[1]);
+            }
+            else if (array[0] == "win")
+            {
+                return chap.WonBy(array[1]);
+            }
+            return false;
+        }
         public bool IsClearedBy(Player p)
         {
             string[] array = Name.Split('_');
