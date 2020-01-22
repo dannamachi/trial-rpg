@@ -1,0 +1,35 @@
+5|0
+4|3
+A strange statue
+Me|This is...a statue?
+Me|A statue, almost pristine, in the middle of nowhere...suspicious!
+Me|Maybe it's a part of a magic spell...
+Me|That means beside setting up the necessary elements, I also need a mana source for this.
+Me|Then I'll be able to open this formation and take what's being kept inside!
+5|0
+10|2
+Remnant of the past
+Me|Something is carved onto the tree here...let's see.
+Me|"Four lights, diamond"
+Me|"Three up and down"
+Me|"Two left and right"
+Me|Whatever could this mean?
+4|0
+10|8
+The altar
+Me|It's not much, but this is an altar.
+Me|This might be able to diable the magic that's sealing this place
+Me|I need something to start the ritual...like a fire
+Me|I also need something that can point to the sealing magic...do I have something like that?
+4|0
+5|7
+Observe the magic
+Me|This sealing magic is hard to crack...I can't even find any trace of it
+Me|They must've hidden the core of the magic somewhere around here
+Me|But I can't sense it...there must be another spell at play
+Me|I have to find the core of the magic!
+2|0
+1|6
+Escape the seal
+Me|They've set up a sealing magic here...
+Me|I have no time! Must hurry up and escape this before it gets too dark!

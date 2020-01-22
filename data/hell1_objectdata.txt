@@ -1,8 +1,0 @@
-2
-0|4|1|Lucky Charm
-1|2|2|2|2|Chest|2
-Chest|use|key
-2
-has|key
-read|On the way
-Lucky Charm|place|4,0

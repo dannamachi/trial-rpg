@@ -1,0 +1,8 @@
+artifacts
+Magic Crystal|Marble|Match stick|Shovel
+characters
+Me
+objects
+Magic Altar|Burial site|West Lantern|South Lantern|North Lantern|East Lantern|Statue
+tiles
+Blocked|Unblocked
