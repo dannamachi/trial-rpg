@@ -62,6 +62,7 @@ namespace SEVirtual
             //_places.Add("invslot", new Rectangle(0, 550, 50, 50));
             _places.Add("hover_art", new Rectangle(500, 500, 250, 100));
             _places.Add("hover_quest", new Rectangle(500, 500, 250, 100));
+            _places.Add("infoline", new Rectangle(40,530,500,100));
 
             _places.Add("button_yes", new Rectangle(310, 350, 60, 40));
             _places.Add("button_no", new Rectangle(430, 350, 60, 40));
@@ -78,7 +79,7 @@ namespace SEVirtual
 
             _places.Add("dial_name", new Rectangle(0, 300, 100, 50));
             _places.Add("dial_box", new Rectangle(0, 350, 800, 250));
-            _places.Add("person", new Rectangle(300,200,200,400));
+            _places.Add("person", new Rectangle(210,130,350,400));
 
             _places.Add("button_easy", new Rectangle(300, 200, 200, 50));
             _places.Add("button_hard", new Rectangle(300, 300, 200, 50));

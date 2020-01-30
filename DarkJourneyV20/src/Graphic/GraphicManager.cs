@@ -175,7 +175,7 @@ namespace SEGraphic
             // info box
             else if (containerkey == "I") maxwidth = 50;
             // alert box
-            else if (containerkey == "A") maxwidth = 30;
+            else if (containerkey == "A") maxwidth = 20;
             else maxwidth = 30;
 
             int line = 0;
@@ -209,6 +209,7 @@ namespace SEGraphic
             switch (game.Mode)
             {
                 case GameMode.GAME:
+                    //draw hover info
                     Zone gameinv = Viewer.LoadInventoryItems(p);
                     if (gameinv.IsPressed((int)Mouse.X, (int)Mouse.Y))
                     {
@@ -234,6 +235,8 @@ namespace SEGraphic
                             }
                         }
                     }
+                    // draw action info
+                    DrawStringLines(sb,"S","D",new List<string>{p.InfoContent},Viewer.GetPosition("infoline"),Color.White);
                     break;
                 case GameMode.INFO:
                     lines = game.GetInfo();
@@ -243,8 +246,7 @@ namespace SEGraphic
                 case GameMode.ALERT:
                     vec = Viewer.GetPosition("alert_frame");
                     lines = new List<string>();
-                    lines.Add("You are about to ");
-                    lines.Add(game.OpName);
+                    lines.Add(game.Alert);
                     DrawStringLines(sb,"N","A",lines,new Vector2(vec.X + 20, vec.Y + 20),Color.White);
                     break;
                 case GameMode.DIAL:

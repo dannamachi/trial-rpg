@@ -11,6 +11,7 @@ namespace SEVirtual {
         private Inventory _ctokens;
         private Inventory _convos;
         private string _alert;
+        private string _info;
         private ActionVoid _switchalert;
         private RRLine _choose;
         private int _speed;
@@ -30,6 +31,8 @@ namespace SEVirtual {
             _speed = 10;
         }
         //properties
+        public string AlertContent { get => _alert; }
+        public string InfoContent { get => _info; }
         public int Capacity { get => _arts.Capacity; }
         public bool EComm { get; set; }
         public bool SeeingArtifact { get; set; }
@@ -44,35 +47,6 @@ namespace SEVirtual {
         public VirtualObject OpName { get; set; }
         public Artifact Using { get; set; }
         public GameObject Holding { get; set; }
-        public string Info
-        {
-            get
-            {
-                //assume console so use \n and \t
-                string text = "";
-                text += GetStuffList();
-                text += _alert;
-                _alert = "";
-                text += "\n>>>Press c to use item on object\n";
-                if (Holding != null)
-                {
-                    text += "\n>>>Press r to place object\n";
-                }
-                else
-                {
-                    text += "\n>>>Press e to pick up object\n";
-                }
-                if (_quests.Count > 0)
-                {
-                    text += "\n>>>>>Press m to drop a quest\n";
-                }
-                if (_arts.Count > 0)
-                {
-                    text += "\n>>>>>Press k to drop an artifact\n";
-                }
-                return text;
-            }
-        }
         public TileV Tile { get;set; }
         //methods
         public Storybook GetCurrBook() {
@@ -89,6 +63,7 @@ namespace SEVirtual {
             _convos = new Inventory();
             _ctokens = new Inventory();
             _alert = "";
+            _info = "";
             SeeingArtifact = true;
             EComm = false;
         }
@@ -231,6 +206,7 @@ namespace SEVirtual {
             if (Has(name,key))
             {
                 Remove(name, key);
+                _info = "You have removed " + name;
             }
         }
         public void UpdateToken()
@@ -255,8 +231,7 @@ namespace SEVirtual {
             if (_arts.Has(name))
             { 
                 Using = Remove(name, "A") as Artifact;
-                _alert = "\nYou used " + Using.Name + " on " + Tile.Object.Name + "\n";
-                _alert += "\nSee if you can find anything at the tile now.\n";
+                _info = "You used " + Using.Name + " on " + Tile.Object.Name;
             }
         }
         public void PickPlaceObject()
@@ -280,7 +255,7 @@ namespace SEVirtual {
                         Tile.Object.ToggleHold();
                         Holding = Tile.Object as GameObject;
                         Tile.Object = null;
-                        _alert = "\nYou picked up a " + Holding.Name;
+                        _info = "You picked up a " + Holding.Name;
                     }
                 }
             }
@@ -296,11 +271,11 @@ namespace SEVirtual {
                         Holding.ToggleHold();
                         Tile.Object = Holding;
                         Holding = null;
-                        _alert = "\nYou placed " + Tile.Object.Name + " at Tile " + Tile.X + " - " + Tile.Y + "\n";
+                        _info = "You placed " + Tile.Object.Name + " at Tile " + Tile.X + " - " + Tile.Y;
                     }
                     else
                     {
-                        _alert = "\nThere is already something there\n";
+                        _info = "There is already something there.";
                     }
                 }
             }
@@ -329,20 +304,14 @@ namespace SEVirtual {
             return false;
         }
         public void FlipTile() {
-            if (Tile.Object != null)
-            {
-                _alert = "\nYou observed that there is a " + Tile.Object.Name + " at the site.\n";
-            }
-            else
-            {
-                _alert = "";
-            }
+            _alert = "";
+            _info = "";
             if (!HasRead())
             {
                 if (CanRead(Tile.Trigger))
                     RunDialogue();
                 else
-                    _alert += "\nThere's nothing to do here.\n";
+                    _info = "There's nothing to do here.";
             }
             else if (Tile.Trigger != null) {
                 if (Tile.CanBeFlippedBy(this))
@@ -352,7 +321,7 @@ namespace SEVirtual {
                         if (Tile.Trigger is TriggerF)
                         {
                             if (!CanFulfill(Tile.Trigger as TriggerF))
-                                _alert += "\nYou failed one of the quest(s)!\n";
+                                _info = "You failed one of the quest(s)!";
                             Tile.Trigger.FlippedBy(this);
                         }
                         else
@@ -363,11 +332,11 @@ namespace SEVirtual {
                             if (CanAdd(key, Tile.Trigger.Count))
                             {
                                 Tile.Trigger.FlippedBy(this);
-                                _alert += "\nYou got something!\n";
+                                _info = "You got something!";
                             }
                             else
                             {
-                                _alert += "\nYou cannot get this due to limited space.\n";
+                                _info = "You cannot get this due to limited space.";
                             }
                         }
                     }
@@ -379,11 +348,11 @@ namespace SEVirtual {
                         else if (Tile.Trigger is TriggerQ) { item = "quest(s)"; }
                         if (item != "")
                         {
-                            _alert += "Gaining " + Tile.Trigger.Count + " " + item;
+                            _alert = "Gaining " + Tile.Trigger.Count + " " + item ;
                         }
                         else
                         {
-                            _alert += "Attempting " + Tile.Trigger.Count + " quest(s)";
+                            _alert = "Attempting " + Tile.Trigger.Count + " quest(s)";
                         } 
                         foreach (string qname in Tile.Trigger.Namelist)
                         {
@@ -394,12 +363,18 @@ namespace SEVirtual {
                 }
                 else
                 {
-                    _alert += "\nThere might be something that you can do here.\n";
+                    if (Tile.Object != null)
+                    {
+                        _info = "You observed that there is a " + Tile.Object.Name + " at the site.";
+                    }
+                    else {
+                        _info = "There might be something that you can do here.";
+                    }
                 }
             }
             else
             {
-                _alert += "\nThere's nothing to get here.\n";
+                _info = "There's nothing to get here.";
             }
         }
         public void Move(TDir dir) {

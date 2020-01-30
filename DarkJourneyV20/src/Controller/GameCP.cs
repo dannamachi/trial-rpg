@@ -28,6 +28,7 @@ namespace SEVirtual {
         private VirtualObject _diff;
         private string _map;
         private PlayerCP _playCP;
+        private string _alert;
         //constructors
         public GameCP() {
             _playCP = CreatePlayCP();
@@ -36,7 +37,7 @@ namespace SEVirtual {
             _opname = new VirtualObject();
             Mode = GameMode.MAP;
             Dialogue = "";
-            Alert = "";
+            _alert = "";
         }
         //properties
         public ActionUse LoadTexture { get; set; }
@@ -63,7 +64,15 @@ namespace SEVirtual {
                 _playCP.Player.OpName.Name = value;
             }
         }
-        public string Alert { get; set; }
+        public string Alert {
+            get {
+                if (_alert == "") return _playCP.Player.AlertContent;
+                else return _alert;
+            }
+            set {
+                _alert = value;
+            }
+        }
         public string Dialogue { get; set; }
         public GameMode Mode {
             get => _mode;
@@ -218,13 +227,13 @@ namespace SEVirtual {
         }
         public void SetEasy() 
         {
-            if (OpName == "SET") { Diff = "EASY"; Mode = GameMode.MENU; }
-            else { OpName = "SET"; SwitchAlert(); }
+            if (OpName == "SET") { Diff = "EASY"; Mode = GameMode.MENU; _alert = ""; }
+            else { OpName = "SET"; SwitchAlert(); _alert = "You are about to set the difficulty to Easy."; }
         }
         public void SetHard() 
         {
-            if (OpName == "SET") { Diff = "HARD"; Mode = GameMode.MENU; }
-            else { OpName = "SET"; SwitchAlert(); }
+            if (OpName == "SET") { Diff = "HARD"; Mode = GameMode.MENU; _alert  = ""; }
+            else { OpName = "SET"; SwitchAlert(); _alert = "You are about to set the difficulty to Hard."; }
         }
         public void CheckWin()
         {
@@ -352,7 +361,7 @@ namespace SEVirtual {
             GraphicManager.InitializeMap(_map);
             Mode = GameMode.SET;
             Dialogue = "";
-            Alert = "";
+            _alert = "";
             OpName = "";
         }
         public void Reset()
@@ -360,22 +369,24 @@ namespace SEVirtual {
             if (OpName == "RESET")
             {
                 Reload();
+                _alert = "";
             }
-            else { OpName = "RESET"; SwitchAlert(); }
+            else { OpName = "RESET"; SwitchAlert(); _alert = "You are about to reset the map.";}
         }
         public void SaveQuit()
         {
-            if (OpName == "SAVEQUIT") { Mode = GameMode.MENU; }
-            else { OpName = "SAVEQUIT"; SwitchAlert(); }
+            if (OpName == "SAVEQUIT") { Mode = GameMode.MENU; _alert = "";}
+            else { OpName = "SAVEQUIT"; SwitchAlert(); _alert = "You are about to return to the menu.";}
         }
         public void QuitTheGame() {
-            if (OpName == "QUIT") { IsQuit = true; }
-            else { OpName = "QUIT"; SwitchAlert(); }
+            if (OpName == "QUIT") { IsQuit = true; _alert = ""; }
+            else { OpName = "QUIT"; SwitchAlert(); _alert = "You are about to quit the game."; }
         }
         public void PlayTheGame() {
             if (_map != null && !IsWin && !IsLose)
             {
                 Mode = GameMode.GAME;
+                _playCP.Player.EComm = false;
             }
         }
     }

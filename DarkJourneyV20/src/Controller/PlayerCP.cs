@@ -35,13 +35,7 @@ namespace SEVirtual {
         public GameMode Mode { get; set; }
         public int MaxCol { get => _build.MaxCol; }
         public int MaxRow { get => _build.MaxRow; }
-        private string GetDrawTrigger(Trigger trig)
-        {
-            if (trig is TriggerA) return "A ";
-            if (trig is TriggerQ) return "Q ";
-            if (trig is TriggerF) return "F ";
-            return "! ";
-        }
+
         public PlayerAction PlayerAction
         {
             get
@@ -94,7 +88,7 @@ namespace SEVirtual {
         }
         public void IncrementPage()
         {
-            if (_infopage * 10 < _info.Split('|').ToList().Count) _infopage += 1;
+            if ((_infopage + 1) * 10 < _info.Split('|').ToList().Count) _infopage += 1;
         }
         public List<string> GetInfo()
         {
@@ -236,11 +230,6 @@ namespace SEVirtual {
                 }
             }
             return null;
-        }
-        public TileV FindTileAt(int x, int y)
-        {
-            if (x > MaxCol || x < 0 || y > MaxRow || y < 0) { return null; }
-            return _build.FindTileAt(_tiles, x, y);
         }
         private void PerformAction_Void(RRLine line)
         {

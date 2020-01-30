@@ -57,6 +57,7 @@ namespace SEVirtual {
             {
                 _gameCP.OpName = "TOTALRESET";
                 _gameCP.SwitchAlert();
+                _gameCP.Alert = "You are about to reset the game.";
             }
         }
         public void ProcessInput()
