@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/characters.png</SourceFile>
+  <SourceFile>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/characters.png</SourceFile>
   <SourceTime>2019-11-22T19:54:48.6245894+07:00</SourceTime>
-  <DestFile>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/bin/Windows/Content/forest1/characters.xnb</DestFile>
-  <DestTime>2020-01-22T15:35:07.5755127+07:00</DestTime>
+  <DestFile>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/bin/Windows/Content/forest1/characters.xnb</DestFile>
+  <DestTime>2020-01-31T22:00:41.2382312+07:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2018-12-08T23:35:54+07:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

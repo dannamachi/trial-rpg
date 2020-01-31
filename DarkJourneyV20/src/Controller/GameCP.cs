@@ -308,12 +308,14 @@ namespace SEVirtual {
         {
             Mode = _pmode;
             _playCP.Running.Run();
+            _alert = "";
             OpName = "";
             _playCP.Running = null;
         }
         public void CancelOp()
         {
             Mode = _pmode;
+            _alert = "";
             OpName = "";
             _playCP.Running = null;
         }
@@ -385,6 +387,7 @@ namespace SEVirtual {
         public void PlayTheGame() {
             if (_map != null && !IsWin && !IsLose)
             {
+                _alert = "";
                 Mode = GameMode.GAME;
                 _playCP.Player.EComm = false;
             }

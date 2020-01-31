@@ -4,17 +4,17 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/Arial.spritefont</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/ArialS.spritefont</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/bg.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/common.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/default.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/guis.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/artifacts.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/bgs.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/characters.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/objects.png</File>
-    <File>D:/GamesDev/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/tiles.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/Arial.spritefont</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/ArialS.spritefont</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/bg.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/common.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/default.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/common/guis.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/artifacts.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/bgs.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/characters.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/objects.png</File>
+    <File>D:/GamesDev/DarkJourney/DarkJourneyV20v3/DarkJourneyV20/DarkJourneyV20/Content/forest1/tiles.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
